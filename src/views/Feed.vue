@@ -13,7 +13,7 @@ import PostComponent from "@/components/PostComponent.vue"
 import {api} from "@/service/api"
 import Post from "@/interface/Post"
 import {useStore} from "vuex";
-import {FETCH_USER_BATCH} from "@/store/actions";
+import {UserMutations} from "@/store/actions";
 
 export default defineComponent({
   components: {
@@ -31,7 +31,7 @@ export default defineComponent({
         const response = await api.get(`/posts`)
         state.posts = state.posts.concat(response.data as Array<Post>)
 
-        await store.dispatch(FETCH_USER_BATCH, state.posts.map(value => value.author))
+        await store.dispatch(UserMutations.FETCH_USER_BATCH, state.posts.map(value => value.author))
       } catch (error) {
         alert("Something went wrong, please try again later.")
         console.error(error)

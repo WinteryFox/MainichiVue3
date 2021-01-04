@@ -24,16 +24,18 @@ const actions: ActionTree<UserState, UserState> & Actions = {
     async [UserMutations.FETCH_SELF](context: ActionContext<UserState, UserState>): Promise<void> {
         try {
             const response = await api.get("/users/@me")
-            console.log(response.data)
             context.commit(UserMutations.FETCH_SELF, response.data)
         } catch (_) {
         }
     },
 
     async [UserMutations.FETCH_USER_BATCH](context: ActionContext<UserState, UserState>, ids: Array<string | bigint>): Promise<void> {
-        const response = await api.get(`/users/${ids.toString()}`) // TODO: Error handling
+        const missing = ids.filter(id => !(id in context.state.users))
 
-        context.commit(UserMutations.FETCH_USER_BATCH, response.data)
+        if (missing.length > 0) {
+            const response = await api.get(`/users/${ids.toString()}`) // TODO: Error handling
+            context.commit(UserMutations.FETCH_USER_BATCH, response.data)
+        }
     }
 }
 

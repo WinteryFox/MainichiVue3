@@ -1,14 +1,14 @@
 <template>
   <div class="container is-fluid">
     <PostComponent
-        v-for="post in state.posts"
+        v-for="post in posts"
         :key="post.snowflake"
         :post="post"/>
   </div>
 </template>
 
 <script lang="ts">
-import {reactive, onMounted, defineComponent} from "vue"
+import {defineComponent, ref} from "vue"
 import PostComponent from "@/components/PostComponent.vue"
 import {api} from "@/service/api"
 import Post from "@/interface/Post"
@@ -20,30 +20,26 @@ export default defineComponent({
     PostComponent
   },
 
-  setup() {
+  async setup() {
     const store = useStore()
-    const state = reactive({
-      posts: new Array<Post>()
-    })
+    const posts = ref(new Array<Post>())
 
     async function fetchPosts() {
       try {
         const response = await api.get(`/posts`)
-        state.posts = state.posts.concat(response.data as Array<Post>)
+        posts.value = posts.value.concat(response.data as Array<Post>)
 
-        await store.dispatch(UserMutations.FETCH_USER_BATCH, state.posts.map(value => value.author))
+        await store.dispatch(UserMutations.FETCH_USER_BATCH, posts.value.map(value => value.author))
       } catch (error) {
         alert("Something went wrong, please try again later.")
         console.error(error)
       }
     }
 
-    onMounted(() => {
-      fetchPosts()
-    })
+    await fetchPosts()
 
     return {
-      state
+      posts
     }
   }
 })

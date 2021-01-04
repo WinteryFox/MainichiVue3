@@ -41,18 +41,11 @@
             to="/profile"
             class="navbar-item is-flex"
             v-else>
-          <span class="icon mr-2"><img :src="avatar" alt="avatar"/></span>
+          <figure class="image mr-2">
+            <img :src="avatar" alt="avatar" class="is-rounded avatar"/>
+          </figure>
           {{ self.username }}
         </router-link>
-        <div class="dropdown-divider"/>
-        <a class="navbar-item is-flex is-disabled">
-          <span class="icon mr-2">
-            <i class="material-icons">
-              dark_mode
-            </i>
-          </span>
-          Dark mode
-        </a>
       </div>
     </div>
   </nav>
@@ -96,9 +89,8 @@ export default defineComponent({
 
     const hamburger = () => {
       isEnabled.value = !isEnabled.value
-      if (isEnabled.value) {
+      if (isEnabled.value)
         document.addEventListener("click", hideListener)
-      }
     }
 
     return {
@@ -114,3 +106,15 @@ export default defineComponent({
   }
 })
 </script>
+
+<style lang="sass" scoped>
+@import '~bulma/bulma.sass'
+
+.avatar
+  +touch
+    width: 24px !important
+    height: 24px !important
+
+  width: 28px !important
+  height: 28px !important
+</style>

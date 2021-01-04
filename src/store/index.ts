@@ -27,6 +27,8 @@ const actions: ActionTree<UserState, UserState> & Actions = {
             context.commit(UserMutations.FETCH_SELF, response.data)
         } catch (_) {
         }
+
+        return Promise.resolve()
     },
 
     async [UserMutations.FETCH_USER_BATCH](context: ActionContext<UserState, UserState>, ids: Array<string | bigint>): Promise<void> {
@@ -36,6 +38,8 @@ const actions: ActionTree<UserState, UserState> & Actions = {
             const response = await api.get(`/users/${ids.toString()}`) // TODO: Error handling
             context.commit(UserMutations.FETCH_USER_BATCH, response.data)
         }
+
+        return Promise.resolve()
     }
 }
 
@@ -52,7 +56,7 @@ interface Mutations<S = UserState> {
 }
 
 const mutations: MutationTree<UserState> & Mutations = {
-    [UserMutations.FETCH_SELF](state: UserState, self: User): void {
+    [UserMutations.FETCH_SELF](state: UserState, self: User) {
         state.self = self
     },
 

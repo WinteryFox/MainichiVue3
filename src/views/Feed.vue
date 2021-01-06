@@ -86,6 +86,7 @@ export default defineComponent({
       try {
         const response = await api.get(`/posts`)
         posts.value = posts.value.concat(response.data as Array<Post>)
+        posts.value.sort((p1, p2) => p1.snowflake < p2.snowflake ? -1 : 1)
 
         await store.dispatch(UserMutations.FETCH_USER_BATCH, posts.value.map(value => value.author))
       } catch (error) {
@@ -109,8 +110,6 @@ export default defineComponent({
         )
 
         posts.value = new Array<Post>()
-
-        createOverlay.value = false
         await fetchPosts()
         await router.push(`/posts/${response.data.snowflake}`)
       } catch (e) {

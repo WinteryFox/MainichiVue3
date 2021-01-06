@@ -5,24 +5,82 @@
         :key="post.snowflake"
         :post="post"/>
   </div>
+
+  <ModalComponent v-model="createOverlay">
+    <template v-slot:activator="{ on }">
+      <div class="buttons m-5">
+        <button
+            v-if="self != null"
+            class="button is-rounded is-primary is-large px-5"
+            v-on="on">
+          <span class="icon"><i class="material-icons">add</i></span>
+        </button>
+        <button
+            v-else
+            class="button is-rounded is-primary is-large px-5
+            has-tooltip-danger has-tooltip-arrow has-tooltip-left"
+            data-tooltip="Login to create a post"
+            disabled>
+          <span class="icon"><i class="material-icons">add</i></span>
+        </button>
+      </div>
+    </template>
+
+    <div class="box">
+      <div class="field">
+        <div class="control">
+          <label>
+            <span class="subtitle">
+              Time to write your beautiful post
+            </span>
+            <textarea
+                class="textarea"
+                placeholder="..."
+                v-model="content"/>
+          </label>
+        </div>
+      </div>
+
+      <div class="field is-grouped">
+        <div class="control">
+          <button
+              class="button is-link"
+              @click="createPost">
+            Create
+          </button>
+        </div>
+      </div>
+    </div>
+  </ModalComponent>
 </template>
 
 <script lang="ts">
-import {defineComponent, ref} from "vue"
+import {computed, defineComponent, ref} from "vue"
 import PostComponent from "@/components/PostComponent.vue"
 import {api} from "@/service/api"
 import Post from "@/interface/Post"
-import {useStore} from "vuex";
-import {UserMutations} from "@/store/actions";
+import {useStore} from "vuex"
+import {UserMutations} from "@/store/actions"
+import ModalComponent from "@/components/ModalComponent.vue"
+import {useRouter} from "vue-router"
+import User from "@/interface/User"
+import {UserState} from "@/store"
 
 export default defineComponent({
   components: {
+    ModalComponent,
     PostComponent
   },
 
   async setup() {
-    const store = useStore()
+    const router = useRouter()
+    const store = useStore<UserState>()
+
     const posts = ref(new Array<Post>())
+    const self = computed<User | null>(() => store.state.self)
+
+    const createOverlay = ref<boolean>(false)
+    const content = ref<string>("")
 
     async function fetchPosts() {
       try {
@@ -38,9 +96,43 @@ export default defineComponent({
 
     await fetchPosts()
 
+    async function createPost() {
+      createOverlay.value = false
+
+      try {
+        const params = new URLSearchParams()
+        params.append("content", content.value)
+
+        const response = await api.post(
+            "/posts",
+            params
+        )
+
+        posts.value = new Array<Post>()
+
+        createOverlay.value = false
+        await fetchPosts()
+        await router.push(`/posts/${response.data.snowflake}`)
+      } catch (e) {
+        console.error(e)
+        alert("Something went wrong, try again later!")
+      }
+    }
+
     return {
-      posts
+      posts,
+      self,
+      createOverlay,
+      content,
+      createPost
     }
   }
 })
 </script>
+
+<style scoped lang="sass">
+.buttons
+  position: fixed
+  right: 0
+  bottom: 0
+</style>

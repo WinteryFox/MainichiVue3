@@ -1,8 +1,8 @@
 <template>
   <div class="box my-3 py-3">
-    <div class="is-size-5 has-text-black">
-      <p>{{ post.content }}</p>
-    </div>
+    <router-link class="is-size-5 has-text-black" :to="`/posts/${props.post.snowflake}`">
+      {{ post.content }}
+    </router-link>
 
     <div>
       <span class="dropdown-divider"/>

@@ -1,5 +1,5 @@
 <template>
-  <ModalComponent @close="close">
+  <ModalComponent active @close="close">
     <div class="box mx-2">
       <div class="is-flex is-align-items-center">
         <figure class="image is-96x96 mr-3">
@@ -35,10 +35,10 @@
 import {computed, defineComponent} from "vue";
 import {useStore} from "vuex";
 import {useRoute, useRouter} from "vue-router";
-import ModalComponent from "@/components/ModalComponent.vue"
 import {UserMutations} from "@/store/actions";
 import {apiUri} from "@/service/api";
 import PartialUser from "@/interface/PartialUser";
+import ModalComponent from "@/components/ModalComponent.vue";
 
 export default defineComponent({
   components: {

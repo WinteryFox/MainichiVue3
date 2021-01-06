@@ -1,23 +1,26 @@
-import { createRouter, createWebHistory, RouteRecordRaw } from "vue-router"
+import { createRouter, createWebHistory } from "vue-router"
 import Home from "@/views/Home.vue"
-import UserComponent from "@/components/UserComponent.vue"
-
-const routes: Array<RouteRecordRaw> = [
-  {
-    path: "/",
-    component: Home,
-    children: [
-      {
-        path: "/users/:snowflake",
-        component: UserComponent
-      }
-    ]
-  }
-]
+import User from "@/views/User.vue"
+import Post from "@/views/Post.vue"
 
 const router = createRouter({
-  history: createWebHistory(process.env.BASE_URL),
-  routes
+  history: createWebHistory(),
+  routes: [
+    {
+      path: "/",
+      component: Home,
+      children: [
+        {
+          path: "/users/:snowflake",
+          component: User
+        },
+        {
+          path: "/posts/:snowflake",
+          component: Post
+        }
+      ]
+    }
+  ]
 })
 
 export default router

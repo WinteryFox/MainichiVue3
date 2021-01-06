@@ -1,18 +1,26 @@
 <template>
-  <Header/>
   <Suspense>
     <template #default>
       <div>
+        <HeaderComponent/>
         <Feed/>
-        <router-view/>
+
+        <Suspense>
+          <template #default>
+            <router-view/>
+          </template>
+          <template #fallback>
+            <LoaderComponent
+                title="PenWeb"
+                subtitle="Fetching..."/>
+          </template>
+        </Suspense>
       </div>
     </template>
     <template #fallback>
-      <ModalComponent>
-        <div class="loader-wrapper is-active">
-          <div class="loader is-loading"/>
-        </div>
-      </ModalComponent>
+      <LoaderComponent
+          title="PenWeb"
+          subtitle="Now loading"/>
     </template>
   </Suspense>
 </template>
@@ -20,38 +28,16 @@
 <script lang="ts">
 import {defineComponent} from 'vue';
 import Feed from '@/views/Feed.vue';
-import Header from "@/components/Header.vue";
-import ModalComponent from "@/components/ModalComponent.vue";
+import HeaderComponent from "@/components/HeaderComponent.vue";
+import LoaderComponent from "@/components/LoaderComponent.vue";
 
 export default defineComponent({
   name: 'Home',
+
   components: {
-    ModalComponent,
+    LoaderComponent,
     Feed,
-    Header,
-  },
+    HeaderComponent
+  }
 });
 </script>
-
-<style lang="sass">
-.loader-wrapper
-  overflow: hidden
-  top: 0
-  left: 0
-  width: 100%
-  height: 100%
-  transition: opacity .3s
-  display: flex
-  justify-content: center
-  align-items: center
-  opacity: 0
-  z-index: -1
-
-  .loader
-    width: 80px
-    height: 80px
-
-  &.is-active
-    opacity: 1
-    z-index: 1
-</style>

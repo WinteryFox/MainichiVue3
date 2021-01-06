@@ -111,7 +111,7 @@ export default defineComponent({
 @import '~bulma/bulma.sass'
 
 .avatar
-  +touch
+  @include touch
     width: 24px !important
     height: 24px !important
 

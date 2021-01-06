@@ -31,21 +31,26 @@
          ref="navMenuRef">
       <div class="navbar-end">
         <a
-            :href="loginUri"
+            @click="login"
             class="navbar-item is-flex"
             v-if="self === null">
           <span class="icon mr-2"><i class="material-icons">login</i></span>
           Login
         </a>
-        <router-link
-            to="/profile"
-            class="navbar-item is-flex"
-            v-else>
-          <figure class="image mr-2">
-            <img :src="avatar" alt="avatar" class="is-rounded avatar"/>
-          </figure>
-          {{ self.username }}
-        </router-link>
+        <div class="navbar-item has-dropdown" v-else>
+          <router-link
+              to="/profile"
+              class="navbar-item is-flex">
+            <figure class="image mr-2 avatar">
+              <img :src="avatar" alt="avatar" class="is-rounded avatar"/>
+            </figure>
+            {{ self.username }}
+          </router-link>
+          <a class="navbar-item is-flex" @click="logout">
+            <span class="icon mr-2 has-text-danger"><i class="material-icons">logout</i></span>
+            Logout
+          </a>
+        </div>
       </div>
     </div>
   </nav>
@@ -55,14 +60,13 @@
 import {computed, defineComponent, onMounted, ref} from "vue";
 import {useStore} from "vuex";
 import {UserMutations} from "@/store/actions";
-import {apiUri} from "@/service/api";
+import {api, apiUri} from "@/service/api";
 import User from "@/interface/User";
 import {UserState} from "@/store";
 
 export default defineComponent({
   setup() {
     const store = useStore<UserState>()
-    const loginUri = `${apiUri}/oauth2/authorization/google`
     const self = computed<User | null>(() => store.state.self)
     const avatar = computed<string>(() =>
         self.value != null ?
@@ -93,6 +97,18 @@ export default defineComponent({
         document.addEventListener("click", hideListener)
     }
 
+    async function login() {
+      const params = new URLSearchParams()
+      params.append("redirect_uri", window.location.href)
+
+      window.location.href = `${apiUri}/oauth2/authorization/google?` + params.toString()
+    }
+
+    async function logout() {
+      await api.post("/logout")
+      store.commit(UserMutations.FETCH_SELF, null)
+    }
+
     return {
       hamburgerRef,
       navMenuRef,
@@ -101,7 +117,8 @@ export default defineComponent({
       hideListener,
       self,
       avatar,
-      loginUri
+      login,
+      logout
     }
   }
 })
@@ -111,10 +128,11 @@ export default defineComponent({
 @import '~bulma/bulma.sass'
 
 .avatar
+  margin-left: -0.25rem
+  width: 28px !important
+  height: 28px !important
+
   @include touch
     width: 24px !important
     height: 24px !important
-
-  width: 28px !important
-  height: 28px !important
 </style>

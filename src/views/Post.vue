@@ -5,7 +5,7 @@
 </template>
 
 <script lang="ts">
-import ModalComponent from "@/components/ModalComponent"
+import ModalComponent from "@/components/ModalComponent.vue"
 import {defineComponent, ref} from "vue";
 import {useRoute, useRouter} from "vue-router";
 import PostComponent from "@/components/PostComponent.vue";

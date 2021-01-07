@@ -2,6 +2,7 @@ import { createRouter, createWebHistory } from "vue-router"
 import Home from "@/views/Home.vue"
 import User from "@/views/User.vue"
 import Post from "@/views/Post.vue"
+import Profile from "@/views/Profile.vue"
 
 const router = createRouter({
   history: createWebHistory(),
@@ -19,8 +20,13 @@ const router = createRouter({
           component: Post
         }
       ]
+    },
+    {
+      path: "/profile",
+      component: Profile
     }
   ]
 })
+
 
 export default router

@@ -23,30 +23,30 @@
         <label for="proficient">Native language(s)</label>
         <div class="field is-grouped is-grouped-multiline" id="proficient">
           <div class="control" v-for="tag in proficient" :key="tag">
-            <div class="tags are-large has-addons">
-              <span class="tag is-info">{{ tag }}</span>
-              <a class="tag is-delete is-danger"/>
+            <div class="tags are-medium has-addons">
+              <span class="tag is-info is-rounded">{{ tag }}</span>
+              <a class="tag is-delete is-danger is-rounded"/>
             </div>
           </div>
           <div class="control">
             <div class="tags">
-              <span class="tag is-large is-light is-success">
+              <a class="tag is-medium is-light is-success is-rounded">
                 +
-              </span>
+              </a>
             </div>
           </div>
         </div>
         <label for="learning">Learning language(s)</label>
         <div class="field is-grouped is-grouped-multiline" id="learning">
           <div class="control" v-for="tag in learning" :key="tag">
-            <div class="tags are-large has-addons">
-              <span class="tag is-info">{{ tag }}</span>
-              <a class="tag is-delete is-danger"/>
+            <div class="tags are-medium has-addons">
+              <span class="tag is-info is-rounded">{{ tag.language }}</span>
+              <a class="tag is-delete is-danger is-rounded"/>
             </div>
           </div>
           <div class="control">
             <div class="tags">
-              <span class="tag is-large is-light is-success">
+              <span class="tag is-medium is-light is-success is-rounded">
                 +
               </span>
             </div>
@@ -73,26 +73,31 @@ import {useStore} from "vuex";
 import {UserState} from "@/store";
 import {useRouter} from "vue-router";
 import {UserMutations} from "@/store/actions";
-import Language from "@/interface/Language"
+import Language, {Learning} from "@/interface/Language"
 
 export default defineComponent({
   name: "Profile",
+
   async setup() {
     const router = useRouter()
     const proficient = ref<Array<string>>()
-    const learning = ref<Array<string>>()
+    const learning = ref<Array<Learning>>()
     const store = useStore<UserState>()
     await store.dispatch(UserMutations.FETCH_SELF)
 
     try {
       const languages: Array<Language> = (await api.get(`languages`)).data
 
-      const response = await api.get(`/users/${store.state.self!.snowflake}/languages`)
-      const p = response.data.proficient.map((value: Record<string, any>) => value.language)
-      const l = response.data.learning.map((value: Record<string, any>) => value.language)
-      proficient.value = p.map((value: string) => languages.find(v => v.code == value)?.language)
-      learning.value = l.map((value: string) => languages.find(v => v.code == value)?.language)
-
+      const response = await api.get(`/users/${store.state.self?.snowflake}/languages`)
+      proficient.value = (response.data.proficient as Array<string>)
+          .map(value => languages.find(v => v.code == value)!!.language)
+      learning.value = (response.data.learning as Array<Learning>)
+          .map(value => {
+            return {
+              language: languages.find(v => v.code == value.language)!!.language,
+              proficiency: value.proficiency
+            }
+          })
     } catch (e) {
       console.error(e)
       alert("Something went wrong!")
@@ -133,7 +138,6 @@ h3
   padding: 50px
 
 .grid .column
-  padding: auto
   flex-grow: 1
 
 .btnregister

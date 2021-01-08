@@ -34,7 +34,7 @@
             @click="login"
             class="navbar-item is-flex"
             v-if="self === null">
-          <span class="icon mr-2"><i class="material-icons">login</i></span>
+          <span class="icon mr-2 has-text-success"><i class="material-icons">login</i></span>
           Login
         </a>
         <div class="navbar-item has-dropdown" v-else>

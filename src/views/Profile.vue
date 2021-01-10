@@ -5,73 +5,101 @@
       <h1>Profile</h1>
       <h3>Upload or change your profile picture</h3>
       <div class="photo">
-        <button class="btnphoto" type="button" style="font-size: 20px">+</button>
+        <section>
+          <div
+              id="user-avatar"
+              aria-label="user avatar">
+            <figure class="image">
+              <img :src="avatar" alt="avatar" class="is-rounded avatar"/>
+            </figure>
+          </div>
+          <input type="file" name="upload" id="upload" accept="image/png" @change="updateAvatar"/>
+          <label for="upload">
+            <span role="button" tabindex="0" aria-label="upload user profile">
+              <i class="material-icons">
+                upload
+              </i>
+            </span>
+          </label>
+        </section>
       </div>
       <h3>Your introduction:</h3>
       <div class="introtext">
-        <textarea id="introduce" name="introduce" rows="20" cols="41"></textarea>
+        <textarea id="introduce" name="introduce" rows="20" cols="41" v-model="form.summary"/>
       </div>
     </div>
     <div class="column">
       <div class="datatext">
+        <label for="email">E-mail</label>
+        <input type="text" id="email" name="email" :value="email" disabled>
         <label for="fullname">Full name</label>
-        <input type="text" id="fullname" name="fullname" required>
-        <label for="age">Age</label>
-        <input type="text" id="age" name="age" required>
+        <input type="text" id="fullname" name="fullname" v-model="form.username" required>
+        <label for="age">Birthday</label>
+        <input type="text" id="age" name="age" v-model="form.birthday" required>
         <label for="gender">Gender</label>
-        <input type="text" id="gender" name="gender" required>
-        <label for="proficient">Native language(s)</label>
-        <div class="field is-grouped is-grouped-multiline" id="proficient">
-          <div class="control" v-for="tag in proficient" :key="tag">
-            <div class="tags are-medium has-addons">
-              <span class="tag is-info is-rounded">{{ tag }}</span>
-              <a class="tag is-delete is-danger is-rounded"/>
-            </div>
-          </div>
-          <div class="control">
-            <div class="tags">
-              <a class="tag is-medium is-light is-success is-rounded">
-                +
-              </a>
-            </div>
+        <div class="control" id="gender">
+          <label class="radio">
+            <input type="radio" value="M" name="gender" v-model="form.gender">
+            Male
+          </label>
+          <label class="radio">
+            <input type="radio" value="F" name="gender" v-model="form.gender">
+            Female
+          </label>
+          <label class="radio">
+            <input type="radio" :value="null" name="gender" v-model="form.gender">
+            Other
+          </label>
+        </div>
+      </div>
+      <div class="regbutton">
+        <button class="btnregister" type="button" style="font-size: 16px" @click="updateUser">Save</button>
+      </div>
+
+      <label for="proficient">Native language(s)</label>
+      <div class="field is-grouped is-grouped-multiline" id="proficient">
+        <div class="control" v-for="tag in proficient" :key="tag">
+          <div class="tags are-medium has-addons">
+            <span class="tag is-info is-rounded">{{ tag.language }}</span>
+            <a class="tag is-delete is-danger is-rounded" @click="removeProficient(tag)"/>
           </div>
         </div>
-        <label for="learning">Learning language(s)</label>
-        <div class="field is-grouped is-grouped-multiline" id="learning">
-          <div class="control" v-for="tag in learning" :key="tag">
-            <div class="tags are-medium has-addons">
-              <span class="tag is-info is-rounded">{{ tag.language }}</span>
-              <a class="tag is-delete is-danger is-rounded"/>
-            </div>
+        <div class="control">
+          <div class="tags">
+            <a class="tag is-medium is-light is-success is-rounded">
+              +
+            </a>
           </div>
-          <div class="control">
-            <div class="tags">
+        </div>
+      </div>
+      <label for="learning">Learning language(s)</label>
+      <div class="field is-grouped is-grouped-multiline" id="learning">
+        <div class="control" v-for="tag in learning" :key="tag">
+          <div class="tags are-medium has-addons">
+            <span class="tag is-info is-rounded">{{ tag.language }}</span>
+            <a class="tag is-delete is-danger is-rounded" @click="removeLearning(tag)"/>
+          </div>
+        </div>
+        <div class="control">
+          <div class="tags">
               <span class="tag is-medium is-light is-success is-rounded">
                 +
               </span>
-            </div>
           </div>
         </div>
-        <label for="email">E-mail</label>
-        <input type="text" id="email" name="email" required>
-        <label for="addpass">Add a password</label>
-        <input type="password" id="addpass" name="addpass" required>
       </div>
       <div class="regbutton">
-        <a href="feed.html">
-          <button class="btnregister" type="button" style="font-size: 16px">Save</button>
-        </a>
+        <button class="btnregister" type="button" style="font-size: 16px" @click="updateLanguages">Save</button>
       </div>
     </div>
   </div>
 </template>
 
 <script lang="ts">
-import {defineComponent, ref} from "vue";
-import {api} from "@/service/api";
+import {reactive, defineComponent, ref} from "vue";
+import {api, apiUri} from "@/service/api";
 import {useStore} from "vuex";
 import {UserState} from "@/store";
-import {useRouter} from "vue-router";
 import {UserMutations} from "@/store/actions";
 import Language, {Learning} from "@/interface/Language"
 
@@ -79,36 +107,136 @@ export default defineComponent({
   name: "Profile",
 
   async setup() {
-    const router = useRouter()
-    const proficient = ref<Array<string>>()
-    const learning = ref<Array<Learning>>()
+    const proficient = ref<Array<Language>>([])
+    const learning = ref<Array<Learning>>([])
     const store = useStore<UserState>()
     await store.dispatch(UserMutations.FETCH_SELF)
+    const languages: Array<Language> = (await api.get("/languages")).data
+
+    const email = store.state.self?.email
+    const form = reactive({
+      username: store.state.self?.username,
+      birthday: store.state.self?.birthday,
+      gender: store.state.self?.gender,
+      summary: store.state.self?.summary
+    })
 
     try {
-      const languages: Array<Language> = (await api.get(`languages`)).data
-
       const response = await api.get(`/users/${store.state.self?.snowflake}/languages`)
       proficient.value = (response.data.proficient as Array<string>)
-          .map(value => languages.find(v => v.code == value)!!.language)
-      learning.value = (response.data.learning as Array<Learning>)
           .map(value => {
+            // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+            const lang = languages.find(v => v.code == value)!!
+            const code = lang.code
+            const language = lang.language
             return {
-              language: languages.find(v => v.code == value.language)!!.language,
-              proficiency: value.proficiency
+              code,
+              language
+            }
+          })
+      learning.value = response.data.learning
+          .map((value: never) => {
+            // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+            const lang = languages.find(v => v.code == value["language"])!!
+            const code = lang.code
+            const language = lang.language
+            const proficiency = value["proficiency"]
+            return {
+              code,
+              language,
+              proficiency
             }
           })
     } catch (e) {
       console.error(e)
       alert("Something went wrong!")
-      await router.push("/")
     }
-    return {proficient, learning}
+
+    function removeProficient(tag: Language) {
+      proficient.value = proficient.value.filter(value => value.code != tag.code)
+    }
+
+    function removeLearning(tag: Learning) {
+      learning.value = learning.value.filter(value => value.code != tag.code)
+    }
+
+    async function updateAvatar(event: Event) {
+      try {
+        const target = event.target as HTMLInputElement
+        const files = target.files as FileList
+        const form = new FormData()
+        form.append('avatar', files[0])
+
+        await api.patch("/users/@me", form)
+        alert("Successfully updated avatar!")
+      } catch (e) {
+        alert(e.response.data.message)
+      }
+    }
+
+    async function updateUser() {
+      try {
+        await api.post("/users/@me", form)
+        alert("Successfully saved user details!")
+      } catch (e) {
+        alert(e.response.data.message)
+      }
+    }
+
+    async function updateLanguages() {
+      // TODO
+    }
+
+    return {
+      email,
+      form,
+      proficient,
+      learning,
+      removeProficient,
+      removeLearning,
+      updateUser,
+      updateAvatar,
+      avatar: `${apiUri}/avatars/${store.state.self?.avatar}.png`
+    }
   }
 })
 </script>
 
 <style scoped lang="sass">
+@import "~@/assets/main.sass"
+
+section
+  position: relative
+  height: 200px
+  width: 200px
+
+#user-avatar
+  height: inherit
+  width: inherit
+  border: 3px solid $info
+  border-radius: 50%
+  transition: ease-out 200ms
+
+input#upload
+  display: none
+
+label span
+  position: absolute
+  bottom: 0
+  right: 0
+  height: 60px
+  width: 60px
+  background-color: $info
+  display: grid
+  place-items: center
+  border-radius: 50%
+  box-shadow: 0 3px 5px -1px rgba(0, 0, 0, 0.2) 0px 6px 10px 0px rgba(0, 0, 0, 0.14), 0px 1px 18px 0px rgba(0, 0, 0, 0.12)
+  transition: ease-out 200ms
+  cursor: pointer
+
+  &:hover
+    box-shadow: 0 5px 5px -3px rgba(0, 0, 0, 0.2), 0px 8px 10px 1px rgba(0, 0, 0, 0.14), 0px 3px 14px 2px rgba(0, 0, 0, 0.12)
+    background-color: $info-dark
 
 .grid
   background-image: url("~@/assets/background.png")
@@ -164,7 +292,7 @@ h3
   height: 8em
   border-radius: 4em
   border: 1px solid #ccc
-
+  font-size: 20px
 
 .photo
   display: flex

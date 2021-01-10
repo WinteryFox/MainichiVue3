@@ -41,7 +41,7 @@
           <router-link
               to="/profile"
               class="navbar-item is-flex">
-            <figure class="image mr-2 avatar">
+            <figure class="image mr-2">
               <img :src="avatar" alt="avatar" class="is-rounded avatar"/>
             </figure>
             {{ self.username }}

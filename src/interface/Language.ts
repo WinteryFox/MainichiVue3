@@ -3,7 +3,6 @@ export default interface Language {
     readonly language: string;
 }
 
-export interface Learning {
-    readonly language: string;
+export interface Learning extends Language {
     readonly proficiency: number;
 }

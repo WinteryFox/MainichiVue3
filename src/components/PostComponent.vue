@@ -50,6 +50,7 @@ import {defineComponent, PropType} from "vue";
 import {apiUri} from "@/service/api";
 import {useStore} from "vuex";
 import PartialUser from "@/interface/PartialUser";
+import {UserMutations} from "@/store/actions";
 
 export default defineComponent({
   props: {
@@ -59,8 +60,9 @@ export default defineComponent({
     }
   },
 
-  setup(props) {
+  async setup(props) {
     const store = useStore()
+    await store.dispatch(UserMutations.FETCH_USER_BATCH, [props.post.author])
     const user: PartialUser = store.state.users[props.post.author.toString()]
     const avatar = `${apiUri}/avatars/${user.avatar}.png`
 

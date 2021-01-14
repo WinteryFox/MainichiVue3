@@ -1,10 +1,10 @@
 <template>
-  <div class="box my-3 py-3">
-    <router-link class="is-size-5 has-text-black" :to="`/posts/${props.post.snowflake}`">
-      {{ post.content }}
-    </router-link>
+  <router-link :to="`/posts/${props.post.snowflake}`">
+    <div class="box my-3 py-3">
+      <p class="is-size-5 has-text-black">
+        {{ post.content }}
+      </p>
 
-    <div>
       <span class="dropdown-divider"/>
       <div class="is-flex is-justify-content-space-between">
         <router-link class="has-text-grey"
@@ -15,36 +15,27 @@
           </div>
         </router-link>
 
-        <div class="is-flex is-align-self-center">
-          <div class="is-flex is-align-items-center">
-            <button class="button is-small no-border" @click="likePost">
-              <span class="icon">
-                <i class="material-icons liked" v-if="isLiked">
-                  favorite
-                </i>
-                <i class="material-icons-outlined" v-else>
-                  favorite
-                </i>
-              </span>
-            </button>
-            <span class="mx-1"
-                  :class="{ 'liked': isLiked }">
+        <div class="buttons">
+          <button class="button is-rounded green">
+            <span class="icon"><i class="material-icons">comment</i></span>
+            <span>{{ post.commentCount }}</span>
+          </button>
+          <button class="button is-rounded pink" @click="likePost">
+            <span class="icon">
+              <i class="material-icons liked" v-if="isLiked">favorite</i>
+              <i class="material-icons-outlined" v-else>favorite</i>
+            </span>
+            <span :class="{ 'liked': isLiked }">
               {{ post.likeCount }}
             </span>
-          </div>
-          <div class="is-flex is-align-items-center">
-            <button class="button is-small no-border">
-              <span class="icon"><i class="material-icons">comment</i></span>
-            </button>
-            <span class="mx-1">{{ post.commentCount }}</span>
-          </div>
-          <button class="button is-small no-border">
+          </button>
+          <button class="button is-rounded cyan p-2">
             <span class="icon"><i class="material-icons">share</i></span>
           </button>
         </div>
       </div>
     </div>
-  </div>
+  </router-link>
 </template>
 
 <script lang="ts">
@@ -97,9 +88,37 @@ export default defineComponent({
 <style scoped lang="sass">
 @import "~@/assets/main.sass"
 
-.no-border
+.button
   border: none
+  transition-property: background-color, color
+  transition-duration: 0.2s
+  margin-left: 7px !important
 
-.liked
-  color: $pink !important
+  .icon
+    border-radius: 50%
+    width: 38px
+    height: 38px
+
+  &:hover
+    .icon
+      transition-property: background-color, color
+      transition-duration: 0.2s
+
+  &.pink:hover
+    color: $pink
+    .icon
+      background-color: rgba($pink, 0.1)
+
+  &.cyan:hover
+    color: $cyan
+    .icon
+      background-color: rgba($cyan, 0.1)
+
+  &.green:hover
+    color: $green
+    .icon
+      background-color: rgba($green, 0.1)
+
+  .liked
+    color: $pink !important
 </style>

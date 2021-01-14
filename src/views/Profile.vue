@@ -9,9 +9,9 @@
           <div
               id="user-avatar"
               aria-label="user avatar">
-            <figure class="image">
-              <img :src="avatar" alt="avatar" class="is-rounded avatar"/>
-            </figure>
+            <AvatarComponent :avatar="avatar"
+                             size="194"
+                             style="margin-left: 0"/>
           </div>
           <input type="file" name="upload" id="upload" accept="image/png" @change="updateAvatar"/>
           <label for="upload">
@@ -96,14 +96,19 @@
 
 <script lang="ts">
 import {reactive, defineComponent, ref} from "vue";
-import {api, apiUri} from "@/service/api";
+import {api} from "@/service/api";
 import {useStore} from "vuex";
 import {UserState} from "@/store";
 import {UserMutations} from "@/store/actions";
 import Language, {Learning} from "@/interface/Language"
+import AvatarComponent from "@/components/AvatarComponent.vue";
 
 export default defineComponent({
   name: "Profile",
+
+  components: {
+    AvatarComponent
+  },
 
   async setup() {
     const proficient = ref<Array<Language>>([])
@@ -195,7 +200,8 @@ export default defineComponent({
       removeLearning,
       updateUser,
       updateAvatar,
-      avatar: `${apiUri}/avatars/${store.state.self?.avatar}.png`
+      avatar: store.state.self?.avatar,
+      languages,
     }
   }
 })

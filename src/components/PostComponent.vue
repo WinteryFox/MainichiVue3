@@ -19,10 +19,18 @@
           <div class="is-flex is-align-items-center">
             <button class="button is-small no-border" @click="likePost">
               <span class="icon">
-                <i class="material-icons-outlined">favorite</i>
+                <i class="material-icons liked" v-if="isLiked">
+                  favorite
+                </i>
+                <i class="material-icons-outlined" v-else>
+                  favorite
+                </i>
               </span>
             </button>
-            <span class="mx-1">{{ post.likeCount }}</span>
+            <span class="mx-1"
+                  :class="{ 'liked': isLiked }">
+              {{ post.likeCount }}
+            </span>
           </div>
           <div class="is-flex is-align-items-center">
             <button class="button is-small no-border">
@@ -41,12 +49,11 @@
 
 <script lang="ts">
 import Post from "@/interface/Post"
-import {defineComponent, PropType} from "vue";
+import {computed, defineComponent, PropType} from "vue";
 import {api, apiUri} from "@/service/api";
 import {useStore} from "vuex";
 import PartialUser from "@/interface/PartialUser";
 import {UserMutations} from "@/store/actions";
-import Like from "@/interface/Like";
 import {UserState} from "@/store";
 import AvatarComponent from "@/components/AvatarComponent.vue";
 
@@ -64,32 +71,16 @@ export default defineComponent({
 
   async setup(props) {
     const store = useStore<UserState>()
+    const isLiked = computed<boolean>(() => store.state.likes.includes(props.post.snowflake))
+
     await store.dispatch(UserMutations.FETCH_USER_BATCH, [props.post.author])
     const user: PartialUser = store.state.users[props.post.author.toString()]
 
     async function likePost() {
-      const likes: Array<Like> = (await api.get(`/posts/${props.post.snowflake}/likes`)).data as Array<Like>
-      let liked = false
-
-      for (const like of likes) {
-        if (like.liker == store.state.self?.snowflake){
-          liked = true
-          break
-        }
-      }
-
-      console.log(liked)
-
-      //check if the user has already liked the post
-      if (liked) {
-        //unlike the post
-        console.log("Unliked the post")
-        await api.delete(`/posts/${props.post.snowflake}/likes`)
-      }else {
-        //like the post
-        console.log("Liked the post")
+      if (!isLiked.value)
         await api.post(`/posts/${props.post.snowflake}/likes`)
-      }
+      else
+        await api.delete(`/posts/${props.post.snowflake}/likes`)
     }
 
     return {
@@ -97,13 +88,18 @@ export default defineComponent({
       user,
       apiUri,
       likePost,
+      isLiked
     }
   }
 })
 </script>
 
-<style scoped>
-.no-border {
-  border: none;
-}
+<style scoped lang="sass">
+@import "~@/assets/main.sass"
+
+.no-border
+  border: none
+
+.liked
+  color: $pink !important
 </style>

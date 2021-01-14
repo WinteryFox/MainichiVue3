@@ -64,7 +64,11 @@ import {UserState} from "@/store";
 import AvatarComponent from "@/components/AvatarComponent.vue";
 
 export default defineComponent({
-  components: {AvatarComponent},
+
+  components: {
+    AvatarComponent
+  },
+
   setup() {
     const store = useStore<UserState>()
     const self = computed<User | null>(() => store.state.self)

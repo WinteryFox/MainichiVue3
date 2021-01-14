@@ -41,9 +41,7 @@
           <router-link
               to="/profile"
               class="navbar-item is-flex">
-            <figure class="image mr-2">
-              <img :src="avatar" alt="avatar" class="is-rounded avatar"/>
-            </figure>
+            <AvatarComponent :avatar="self.avatar" size="24" class="mr-2"/>
             {{ self.username }}
           </router-link>
           <a class="navbar-item is-flex" @click="logout">
@@ -63,8 +61,10 @@ import {UserMutations} from "@/store/actions";
 import {api, apiUri} from "@/service/api";
 import User from "@/interface/User";
 import {UserState} from "@/store";
+import AvatarComponent from "@/components/AvatarComponent.vue";
 
 export default defineComponent({
+  components: {AvatarComponent},
   setup() {
     const store = useStore<UserState>()
     const self = computed<User | null>(() => store.state.self)

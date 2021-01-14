@@ -10,13 +10,8 @@
         <router-link class="has-text-grey"
                      :to="`/users/${props.post.author}`">
           <div class="is-flex is-justify-content-left">
-            <figure class="image is-32x32 mr-3">
-              <img
-                  class="is-rounded"
-                  :src="avatar"
-                  alt="avatar"/>
-            </figure>
-            <p class="is-size-5">{{ user.username }}</p>
+            <AvatarComponent :avatar="user.avatar" size="32"/>
+            <p class="is-size-5 ml-2">{{ user.username }}</p>
           </div>
         </router-link>
 
@@ -51,8 +46,13 @@ import {apiUri} from "@/service/api";
 import {useStore} from "vuex";
 import PartialUser from "@/interface/PartialUser";
 import {UserMutations} from "@/store/actions";
+import AvatarComponent from "@/components/AvatarComponent.vue";
 
 export default defineComponent({
+  components: {
+    AvatarComponent
+  },
+
   props: {
     post: {
       type: Object as PropType<Post>,
@@ -64,12 +64,11 @@ export default defineComponent({
     const store = useStore()
     await store.dispatch(UserMutations.FETCH_USER_BATCH, [props.post.author])
     const user: PartialUser = store.state.users[props.post.author.toString()]
-    const avatar = `${apiUri}/avatars/${user.avatar}.png`
 
     return {
       props,
       user,
-      avatar
+      apiUri
     }
   }
 })

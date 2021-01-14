@@ -3,7 +3,7 @@ export default interface User {
     readonly email: string;
     readonly username: string;
     readonly birthday: string;
-    readonly gender: symbol;
+    readonly gender: string;
     readonly summary: string;
     readonly avatar: string;
 }

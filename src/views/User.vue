@@ -2,14 +2,9 @@
   <ModalComponent active @close="close">
     <div class="box mx-2">
       <div class="is-flex is-align-items-center">
-        <figure class="image is-96x96 mr-3">
-          <img
-              class="is-rounded"
-              :src="avatar"
-              alt="avatar"/>
-        </figure>
+        <AvatarComponent :avatar="user.avatar" size="96"/>
 
-        <div class="is-flex is-flex-direction-column">
+        <div class="is-flex is-flex-direction-column ml-3">
           <p class="is-size-3">{{ user.username }}</p> <!-- TODO: Prevent overflow -->
 
           <div class="is-flex">
@@ -18,14 +13,15 @@
               <img src="/male.svg" alt="male" v-else-if="user.gender === 'M'"/>
               <img src="/other.svg" alt="other" v-else/>
             </span>
-            <p>{{ age }}</p>
+            <p v-if="age != null">{{ age }}</p>
           </div>
         </div>
       </div>
 
       <div>
         <span class="dropdown-divider"/>
-        <p>{{ user.summary }}</p>
+        <p style="white-space: pre-line" v-if="user.summary != null">{{ user.summary }}</p>
+        <p v-else>{{ user.username }} hasn't written a self-introduction yet.</p>
       </div>
     </div>
   </ModalComponent>
@@ -39,9 +35,11 @@ import {UserMutations} from "@/store/actions";
 import {apiUri} from "@/service/api";
 import PartialUser from "@/interface/PartialUser";
 import ModalComponent from "@/components/ModalComponent.vue";
+import AvatarComponent from "@/components/AvatarComponent.vue";
 
 export default defineComponent({
   components: {
+    AvatarComponent,
     ModalComponent
   },
 
@@ -53,15 +51,19 @@ export default defineComponent({
 
     const user: PartialUser = store.state.users[route.params.snowflake as string]
     const avatar = `${apiUri}/avatars/${user.avatar}.png`
-    const age = computed(() => {
-      const today = new Date();
-      const birthDate = new Date(user.birthday);
-      let age = today.getFullYear() - birthDate.getFullYear();
-      const m = today.getMonth() - birthDate.getMonth();
-      if (m < 0 || (m === 0 && today.getDate() < birthDate.getDate())) {
-        age--;
+    const age = computed<number | null>(() => {
+      if (user.birthday != null) {
+        const today = new Date();
+        const birthDate = new Date(user.birthday);
+        let age = today.getFullYear() - birthDate.getFullYear();
+        const m = today.getMonth() - birthDate.getMonth();
+        if (m < 0 || (m === 0 && today.getDate() < birthDate.getDate())) {
+          age--;
+        }
+        return age;
+      } else {
+        return null
       }
-      return age;
     })
 
     function close() {

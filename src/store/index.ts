@@ -7,11 +7,13 @@ import {UserMutations} from "@/store/actions";
 export interface UserState {
     self: User | null;
     users: Record<string, PartialUser>;
+    likes: Array<bigint>;
 }
 
 const state: UserState = {
     self: null,
-    users: {}
+    users: {},
+    likes: [],
 }
 
 interface Actions {
@@ -23,8 +25,9 @@ interface Actions {
 const actions: ActionTree<UserState, UserState> & Actions = {
     async [UserMutations.FETCH_SELF](context: ActionContext<UserState, UserState>): Promise<void> {
         try {
-            const response = await api.get("/users/@me")
-            context.commit(UserMutations.FETCH_SELF, response.data)
+            const self = await api.get("/users/@me")
+            const likes = await api.get(`/users/${self.data.snowflake}/likes`)
+            context.commit(UserMutations.FETCH_SELF, self.data, likes.data)
         } catch (_) {
         }
 
@@ -50,14 +53,16 @@ interface Getters<S = UserState> {
 export const getters: GetterTree<UserState, UserState> & Getters = {}
 
 interface Mutations<S = UserState> {
-    [UserMutations.FETCH_SELF](state: S, self: User): void;
+    [UserMutations.FETCH_SELF](state: S, self: User, likes: Array<bigint>): void;
 
     [UserMutations.FETCH_USER_BATCH](state: S, users: Array<PartialUser>): void;
 }
 
 const mutations: MutationTree<UserState> & Mutations = {
-    [UserMutations.FETCH_SELF](state: UserState, self: User) {
+    [UserMutations.FETCH_SELF](state: UserState, self: User, likes: Array<bigint>) {
         state.self = self
+        state.likes = likes
+        console.log(state.likes)
     },
 
     [UserMutations.FETCH_USER_BATCH](state: UserState, users: Array<PartialUser>) {

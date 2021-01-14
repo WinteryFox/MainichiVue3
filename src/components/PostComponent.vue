@@ -17,7 +17,7 @@
 
         <div class="is-flex is-align-self-center">
           <div class="is-flex is-align-items-center">
-            <button class="button is-small no-border">
+            <button class="button is-small no-border" @click="likePost">
               <span class="icon">
                 <i class="material-icons-outlined">favorite</i>
               </span>
@@ -42,10 +42,12 @@
 <script lang="ts">
 import Post from "@/interface/Post"
 import {defineComponent, PropType} from "vue";
-import {apiUri} from "@/service/api";
+import {api, apiUri} from "@/service/api";
 import {useStore} from "vuex";
 import PartialUser from "@/interface/PartialUser";
 import {UserMutations} from "@/store/actions";
+import Like from "@/interface/Like";
+import {UserState} from "@/store";
 import AvatarComponent from "@/components/AvatarComponent.vue";
 
 export default defineComponent({
@@ -61,14 +63,40 @@ export default defineComponent({
   },
 
   async setup(props) {
-    const store = useStore()
+    const store = useStore<UserState>()
     await store.dispatch(UserMutations.FETCH_USER_BATCH, [props.post.author])
     const user: PartialUser = store.state.users[props.post.author.toString()]
+
+    async function likePost() {
+      const likes: Array<Like> = (await api.get(`/posts/${props.post.snowflake}/likes`)).data as Array<Like>
+      let liked = false
+
+      for (const like of likes) {
+        if (like.liker == store.state.self?.snowflake){
+          liked = true
+          break
+        }
+      }
+
+      console.log(liked)
+
+      //check if the user has already liked the post
+      if (liked) {
+        //unlike the post
+        console.log("Unliked the post")
+        await api.delete(`/posts/${props.post.snowflake}/likes`)
+      }else {
+        //like the post
+        console.log("Liked the post")
+        await api.post(`/posts/${props.post.snowflake}/likes`)
+      }
+    }
 
     return {
       props,
       user,
-      apiUri
+      apiUri,
+      likePost,
     }
   }
 })

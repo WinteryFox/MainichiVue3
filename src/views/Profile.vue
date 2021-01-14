@@ -35,7 +35,7 @@
         <label for="fullname">Full name</label>
         <input type="text" id="fullname" name="fullname" v-model="form.username" required>
         <label for="age">Birthday</label>
-        <input type="text" id="age" name="age" v-model="form.birthday" required>
+        <input type="date" class="pr-3" id="age" name="age" v-model="form.birthday" required>
         <label for="gender">Gender</label>
         <div class="control" id="gender">
           <label class="radio">
@@ -55,7 +55,6 @@
       <div class="regbutton">
         <button class="btnregister" type="button" style="font-size: 16px" @click="updateUser">Save</button>
       </div>
-
       <label for="proficient">Native language(s)</label>
       <div class="field is-grouped is-grouped-multiline" id="proficient">
         <div class="control" v-for="tag in proficient" :key="tag">
@@ -318,7 +317,7 @@ h3
   margin-bottom: 2em
   padding-left: 10px
 
-input[type=text], input[type=password], select
+input[type=text], input[type=password], input[type=date], select
   width: 100%
   padding: 10px 1px
   margin: 10px 0

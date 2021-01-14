@@ -118,11 +118,16 @@ export default defineComponent({
       }
     }
 
+    async function likePost() {
+      await api.post("/posts/")
+    }
+
     return {
       posts,
       self,
       createOverlay,
       content,
+      likePost,
       createPost
     }
   }

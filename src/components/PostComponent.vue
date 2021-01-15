@@ -1,38 +1,32 @@
 <template>
   <router-link :to="`/posts/${props.post.snowflake}`">
     <div class="box my-3 py-3">
-      <p class="is-size-5 has-text-black">
-        {{ post.content }}
-      </p>
-
-      <span class="dropdown-divider"/>
-      <div class="is-flex is-justify-content-space-between">
-        <router-link class="has-text-grey"
-                     :to="`/users/${props.post.author}`">
-          <div class="is-flex is-justify-content-left">
-            <AvatarComponent :avatar="user.avatar" size="32"/>
-            <p class="is-size-5 ml-2">{{ user.username }}</p>
-          </div>
-        </router-link>
-
-        <div class="buttons">
-          <button class="button is-rounded green">
-            <span class="icon"><i class="material-icons">comment</i></span>
-            <span>{{ post.commentCount }}</span>
-          </button>
-          <button class="button is-rounded pink" @click="likePost">
-            <span class="icon">
-              <i class="material-icons liked" v-if="isLiked">favorite</i>
-              <i class="material-icons-outlined" v-else>favorite</i>
-            </span>
-            <span :class="{ 'liked': isLiked }">
-              {{ post.likeCount }}
-            </span>
-          </button>
-          <button class="button is-rounded cyan p-2">
-            <span class="icon"><i class="material-icons">share</i></span>
-          </button>
+      <router-link class="user is-flex"
+                   :to="`/users/${props.post.author}`">
+        <AvatarComponent :avatar="user.avatar" size="59"/>
+        <div class="is-flex is-flex-direction-column ml-2 has-text-black">
+          <span class="username">{{ user.username }}</span>
+          <span class="content">{{ post.content }}</span>
         </div>
+      </router-link>
+
+      <div class="buttons">
+        <button class="button is-rounded green">
+          <span class="icon"><i class="material-icons">comment</i></span>
+          <span>{{ post.commentCount }}</span>
+        </button>
+        <button class="button is-rounded pink" @click="likePost">
+          <span class="icon">
+            <i class="material-icons liked" v-if="isLiked">favorite</i>
+            <i class="material-icons-outlined" v-else>favorite</i>
+          </span>
+          <span :class="{ 'liked': isLiked }">
+            {{ post.likeCount }}
+          </span>
+        </button>
+        <button class="button is-rounded icon-only cyan">
+          <span class="icon"><i class="material-icons">share</i></span>
+        </button>
       </div>
     </div>
   </router-link>
@@ -88,37 +82,76 @@ export default defineComponent({
 <style scoped lang="sass">
 @import "~@/assets/main.sass"
 
-.button
-  border: none
-  transition-property: background-color, color
-  transition-duration: 0.2s
-  margin-left: 7px !important
+.user
+  .image
+    display: flex
+    flex-shrink: 0
 
-  .icon
-    border-radius: 50%
-    width: 38px
-    height: 38px
+  .username
+    overflow-wrap: break-word
+    font-weight: 800
+    font-size: 18px
 
-  &:hover
+  .content
+    font-size: 18px
+
+.buttons
+  justify-content: space-evenly
+
+  .button
+    flex-basis: 59px
+    border: none
+    transition-property: color
+    transition-duration: 0.2s
+    padding: 0
+
+    &.icon-only
+      flex-basis: 38px
+      padding: 0 !important
+
     .icon
-      transition-property: background-color, color
-      transition-duration: 0.2s
+      width: 38px
+      height: 38px
+      border-radius: 50%
 
-  &.pink:hover
-    color: $pink
-    .icon
-      background-color: rgba($pink, 0.1)
+    &:focus
+      box-shadow: none
 
-  &.cyan:hover
-    color: $cyan
-    .icon
-      background-color: rgba($cyan, 0.1)
+    &:hover
+      .icon
+        transition-property: background-color
+        transition-duration: 0.2s
 
-  &.green:hover
-    color: $green
-    .icon
-      background-color: rgba($green, 0.1)
+    &.pink
+      &:hover, &:focus
+        color: $pink
+        outline-style: none
+        box-shadow: none
+        .icon
+          background-color: rgba($pink, 0.1)
+      &:focus .icon
+        box-shadow: rgba($pink, 0.5) 0 0 0 2px inset
 
-  .liked
-    color: $pink !important
+    &.cyan
+      &:hover, &:focus
+        color: $cyan
+        outline-style: none
+        box-shadow: none
+        .icon
+          background-color: rgba($cyan, 0.1)
+      &:focus .icon
+        box-shadow: rgba($cyan, 0.5) 0 0 0 2px inset
+
+    &.green
+      &:hover, &:focus
+        color: $green
+        outline-style: none
+        box-shadow: none
+        .icon
+          background-color: rgba($green, 0.1)
+      &:focus .icon
+        box-shadow: rgba($green, 0.5) 0 0 0 2px inset
+
+    .liked
+      color: $pink
 </style>

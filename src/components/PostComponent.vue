@@ -1,17 +1,24 @@
 <template>
-  <router-link :to="`/posts/${props.post.snowflake}`">
-    <div class="box my-3 py-3">
-      <router-link class="user is-flex"
-                   :to="`/users/${props.post.author}`">
-        <AvatarComponent :avatar="user.avatar" size="59"/>
-        <div class="is-flex is-flex-direction-column ml-2 has-text-black">
-          <span class="username">{{ user.username }}</span>
-          <span class="content">{{ post.content }}</span>
-        </div>
-      </router-link>
+  <div class="post">
+    <router-link class="background" :to="postUrl"/>
+    <div class="box px-3 my-0 py-2 is-shadowless">
+      <div class="is-flex">
+        <router-link :to="userUrl">
+          <AvatarComponent class="mr-3" :avatar="user.avatar" size="59"/>
+        </router-link>
 
-      <div class="buttons">
-        <button class="button is-rounded green">
+        <div class="is-flex is-flex-direction-column details">
+          <router-link :to="userUrl" class="is-flex user-row">
+            <span class="username">{{ user.username }}</span>
+            <span class="ml-2 time has-text-grey">· {{ date }}</span>
+          </router-link>
+
+          <div class="content" tabindex="0">{{ post.content }}</div>
+        </div>
+      </div>
+
+      <div class="buttons mt-2">
+        <button class="button is-rounded green" @click="comment">
           <span class="icon"><i class="material-icons">comment</i></span>
           <span>{{ post.commentCount }}</span>
         </button>
@@ -24,12 +31,24 @@
             {{ post.likeCount }}
           </span>
         </button>
-        <button class="button is-rounded icon-only cyan">
-          <span class="icon"><i class="material-icons">share</i></span>
-        </button>
+        <DropdownComponent>
+          <template #activator="{ on }">
+            <button class="button is-rounded icon-only cyan"
+                    v-on="on">
+              <span class="icon"><i class="material-icons">more_horiz</i></span>
+            </button>
+          </template>
+
+          <template #default>
+            <a class="is-flex is-align-items-center dropdown-item" @click="copyUrl(`/posts/${post.snowflake}`)">
+              <span class="icon mr-2"><i class="material-icons">link</i></span>
+              Copy tweet link
+            </a>
+          </template>
+        </DropdownComponent>
       </div>
     </div>
-  </router-link>
+  </div>
 </template>
 
 <script lang="ts">
@@ -41,9 +60,13 @@ import PartialUser from "@/interface/PartialUser";
 import {UserMutations} from "@/store/actions";
 import {UserState} from "@/store";
 import AvatarComponent from "@/components/AvatarComponent.vue";
+import moment from "moment";
+import DropdownComponent from "@/components/DropdownComponent.vue";
+import { copyUrl } from "@/interface/Functions"
 
 export default defineComponent({
   components: {
+    DropdownComponent,
     AvatarComponent
   },
 
@@ -61,6 +84,9 @@ export default defineComponent({
     await store.dispatch(UserMutations.FETCH_USER_BATCH, [props.post.author])
     const user: PartialUser = store.state.users[props.post.author.toString()]
 
+    const time = Number(1577836800000n + (BigInt(props.post.snowflake) >> 22n))
+    const date = moment(time).fromNow(true)
+
     async function likePost() {
       if (!isLiked.value)
         await api.post(`/posts/${props.post.snowflake}/likes`)
@@ -68,12 +94,24 @@ export default defineComponent({
         await api.delete(`/posts/${props.post.snowflake}/likes`)
     }
 
+    async function comment() {
+      // TODO
+    }
+
+    const userUrl = `/users/${user.snowflake}`
+    const postUrl = `/posts/${props.post.snowflake}`
+
     return {
       props,
       user,
       apiUri,
       likePost,
-      isLiked
+      comment,
+      isLiked,
+      date,
+      postUrl,
+      userUrl,
+      copyUrl
     }
   }
 })
@@ -82,18 +120,36 @@ export default defineComponent({
 <style scoped lang="sass">
 @import "~@/assets/main.sass"
 
-.user
-  .image
-    display: flex
-    flex-shrink: 0
+.background
+  position: absolute
+  width: 100%
+  height: 100%
+
+.post
+  position: relative
+
+.details
+  min-width: 0
+
+.user-row
+  z-index: 1
 
   .username
-    overflow-wrap: break-word
+    color: $black
     font-weight: 800
     font-size: 18px
+    overflow: hidden
+    white-space: nowrap
+    text-overflow: ellipsis
 
-  .content
-    font-size: 18px
+  .time
+    flex-shrink: 0
+
+.content
+  display: flex
+  color: $black
+  font-size: 18px
+  overflow-wrap: break-word
 
 .buttons
   justify-content: space-evenly
@@ -127,8 +183,10 @@ export default defineComponent({
         color: $pink
         outline-style: none
         box-shadow: none
+
         .icon
           background-color: rgba($pink, 0.1)
+
       &:focus .icon
         box-shadow: rgba($pink, 0.5) 0 0 0 2px inset
 
@@ -137,8 +195,10 @@ export default defineComponent({
         color: $cyan
         outline-style: none
         box-shadow: none
+
         .icon
           background-color: rgba($cyan, 0.1)
+
       &:focus .icon
         box-shadow: rgba($cyan, 0.5) 0 0 0 2px inset
 
@@ -147,8 +207,10 @@ export default defineComponent({
         color: $green
         outline-style: none
         box-shadow: none
+
         .icon
           background-color: rgba($green, 0.1)
+
       &:focus .icon
         box-shadow: rgba($green, 0.5) 0 0 0 2px inset
 

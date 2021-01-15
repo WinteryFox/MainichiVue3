@@ -1,9 +1,11 @@
 <template>
-  <div class="container is-fluid">
-    <PostComponent
-        v-for="post in posts"
-        :key="post.snowflake"
-        :post="post"/>
+  <div class="container">
+    <div v-for="post in posts" :key="post.snowflake">
+      <PostComponent
+          :key="post.snowflake"
+          :post="post"/>
+      <span class="dropdown-divider m-0"/>
+    </div>
   </div>
 
   <ModalComponent v-model="createOverlay">
@@ -135,7 +137,19 @@ export default defineComponent({
 </script>
 
 <style scoped lang="sass">
+@import "~@/assets/main.sass"
+
+.container
+  background-color: $white-bis
+  margin: 0
+
+@include tablet
+  .container
+    padding: 0 20%
+    max-width: 100% !important
+
 .buttons
+  z-index: 2
   position: fixed
   right: 0
   bottom: 0

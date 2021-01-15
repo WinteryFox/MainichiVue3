@@ -1,11 +1,11 @@
 <template>
   <ModalComponent active @close="close">
-    <div class="box mx-2">
+    <div class="box">
       <div class="is-flex is-align-items-center">
         <AvatarComponent :avatar="user.avatar" size="96"/>
 
-        <div class="is-flex is-flex-direction-column ml-3">
-          <p class="is-size-3">{{ user.username }}</p> <!-- TODO: Prevent overflow -->
+        <div class="is-flex is-flex-direction-column ml-3 user">
+          <span class="is-size-3 username">{{ user.username }}</span>
 
           <div class="is-flex">
             <span class="icon">
@@ -20,8 +20,8 @@
 
       <div>
         <span class="dropdown-divider"/>
-        <p style="white-space: pre-line" v-if="user.summary != null">{{ user.summary }}</p>
-        <p v-else>{{ user.username }} hasn't written a self-introduction yet.</p>
+        <span style="white-space: pre-line" v-if="user.summary != null">{{ user.summary }}</span>
+        <span v-else>{{ user.username }} hasn't written a self-introduction yet.</span>
       </div>
     </div>
   </ModalComponent>
@@ -79,3 +79,16 @@ export default defineComponent({
   }
 })
 </script>
+
+<style lang="sass">
+.user
+  min-width: 0
+
+  .username
+    overflow: hidden
+    white-space: nowrap
+    text-overflow: ellipsis
+
+.image
+  flex-shrink: 0
+</style>

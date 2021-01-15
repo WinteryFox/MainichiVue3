@@ -1,7 +1,6 @@
 <template>
   <figure v-if="avatar != null"
           class="image"
-          style="margin-left: -4px"
           :style="{ 'width': `${size}px`, 'height': `${size}px` }">
     <img class="is-rounded avatar"
          :src="`${apiUri}/avatars/${avatar}.png`"

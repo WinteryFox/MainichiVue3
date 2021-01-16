@@ -4,16 +4,19 @@ import User from "@/interface/User";
 import PartialUser from "@/interface/PartialUser";
 import {UserMutations} from "@/store/actions";
 import Like from "@/interface/Like";
+import Post from "@/interface/Post";
 
 export interface UserState {
     self: User | null;
     users: Record<string, PartialUser>;
+    posts: Record<string, Post>;
     likes: Array<bigint>;
 }
 
 const state: UserState = {
     self: null,
     users: {},
+    posts: {},
     likes: [],
 }
 
@@ -26,6 +29,8 @@ interface Actions {
     [UserMutations.FETCH_SELF](context: ActionContext<UserState, UserState>): Promise<void>;
 
     [UserMutations.FETCH_USER_BATCH](context: ActionContext<UserState, UserState>, ids: Array<string | bigint>): Promise<void>;
+
+    [UserMutations.FETCH_POSTS](context: ActionContext<UserState, UserState>): Promise<void>;
 }
 
 const actions: ActionTree<UserState, UserState> & Actions = {
@@ -52,7 +57,17 @@ const actions: ActionTree<UserState, UserState> & Actions = {
         }
 
         return Promise.resolve()
-    }
+    },
+
+    async [UserMutations.FETCH_POSTS](context: ActionContext<UserState, UserState>): Promise<void> {
+        const posts: Array<Post> = (await api.get(`/posts`)).data
+        //posts.value = posts.value.concat(response.data as Array<Post>)
+        //posts.value.sort((p1, p2) => p1.snowflake > p2.snowflake ? -1 : 1)
+
+        await context.dispatch(UserMutations.FETCH_USER_BATCH, posts.map(value => value.author))
+
+        context.commit(UserMutations.FETCH_POSTS, posts)
+    },
 }
 
 // eslint-disable-next-line @typescript-eslint/no-empty-interface
@@ -69,6 +84,8 @@ interface Mutations<S = UserState> {
     [UserMutations.LIKE_CREATED](state: S, like: Like): void;
 
     [UserMutations.LIKE_DELETED](state: S, like: Like): void;
+
+    [UserMutations.FETCH_POSTS](state: S, posts: Array<Post>): void;
 }
 
 const mutations: MutationTree<UserState> & Mutations = {
@@ -83,12 +100,39 @@ const mutations: MutationTree<UserState> & Mutations = {
     },
 
     [UserMutations.LIKE_CREATED](state: UserState, like: Like): void {
+        if (like.post.toString() in state.posts) {
+            const post = state.posts[like.post.toString()]
+            state.posts[like.post.toString()] = {
+                snowflake: post.snowflake,
+                author: post.author,
+                content: post.content,
+                likeCount: post.likeCount + 1,
+                commentCount: post.commentCount,
+            }
+        }
+
         if (like.liker == state.self?.snowflake)
             state.likes.push(like.post)
     },
 
     [UserMutations.LIKE_DELETED](state: UserState, like: Like): void {
+        if (like.post.toString() in state.posts) {
+            const post = state.posts[like.post.toString()]
+            state.posts[like.post.toString()] = {
+                snowflake: post.snowflake,
+                author: post.author,
+                content: post.content,
+                likeCount: post.likeCount - 1,
+                commentCount: post.commentCount,
+            }
+        }
+
         state.likes = state.likes.filter(value => value != like.post)
+    },
+
+    [UserMutations.FETCH_POSTS](state: UserState, posts: Array<Post>): void {
+        for (const post of posts)
+            state.posts[post.snowflake.toString()] = post
     },
 }
 

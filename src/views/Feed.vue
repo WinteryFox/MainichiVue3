@@ -60,13 +60,13 @@
 import {computed, defineComponent, ref} from "vue"
 import PostComponent from "@/components/PostComponent.vue"
 import {api} from "@/service/api"
-import Post from "@/interface/Post"
 import {useStore} from "vuex"
 import {UserMutations} from "@/store/actions"
 import ModalComponent from "@/components/ModalComponent.vue"
 import {useRouter} from "vue-router"
 import User from "@/interface/User"
 import {UserState} from "@/store"
+import Post from "@/interface/Post";
 
 export default defineComponent({
   components: {
@@ -78,23 +78,14 @@ export default defineComponent({
     const router = useRouter()
     const store = useStore<UserState>()
 
-    const posts = ref(new Array<Post>())
+    const posts = ref<Record<string, Post>>(store.state.posts)
     const self = computed<User | null>(() => store.state.self)
 
     const createOverlay = ref<boolean>(false)
     const content = ref<string>("")
 
     async function fetchPosts() {
-      try {
-        const response = await api.get(`/posts`)
-        posts.value = posts.value.concat(response.data as Array<Post>)
-        posts.value.sort((p1, p2) => p1.snowflake > p2.snowflake ? -1 : 1)
-
-        await store.dispatch(UserMutations.FETCH_USER_BATCH, posts.value.map(value => value.author))
-      } catch (error) {
-        alert("Something went wrong, please try again later.")
-        console.error(error)
-      }
+      await store.dispatch(UserMutations.FETCH_POSTS)
     }
 
     await fetchPosts()
@@ -111,7 +102,6 @@ export default defineComponent({
             params
         )
 
-        posts.value = new Array<Post>()
         await fetchPosts()
         await router.push(`/posts/${response.data.snowflake}`)
       } catch (e) {

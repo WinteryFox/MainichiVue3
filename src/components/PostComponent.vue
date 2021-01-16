@@ -53,7 +53,7 @@
 
 <script lang="ts">
 import Post from "@/interface/Post"
-import {computed, defineComponent, PropType} from "vue";
+import {computed, defineComponent, PropType, ref} from "vue";
 import {api, apiUri} from "@/service/api";
 import {useStore} from "vuex";
 import PartialUser from "@/interface/PartialUser";
@@ -87,7 +87,7 @@ export default defineComponent({
     const user: PartialUser = store.state.users[props.post.author.toString()]
 
     const time = Number(1577836800000n + (BigInt(props.post.snowflake) >> 22n))
-    const date = moment(time).fromNow(true)
+    const date = ref(moment(time).fromNow(true))
 
     async function likePost() {
       if (!isLiked.value)
@@ -102,6 +102,8 @@ export default defineComponent({
 
     const userUrl = `/users/${user.snowflake}`
     const postUrl = `/posts/${props.post.snowflake}`
+
+    setInterval(() => date.value = moment(time).fromNow(true), 60000)
 
     return {
       props,

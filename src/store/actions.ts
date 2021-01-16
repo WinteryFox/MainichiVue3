@@ -5,4 +5,5 @@ export enum UserMutations {
     LIKE_CREATED = "like_created",
     LIKE_DELETED = "like_deleted",
     FETCH_POSTS = "fetch_posts",
+    POST_CREATED = "post_created",
 }

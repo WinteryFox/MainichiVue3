@@ -75,20 +75,19 @@ export default defineComponent({
   },
 
   async setup() {
-    const router = useRouter()
     const store = useStore<UserState>()
 
-    const posts = ref<Record<string, Post>>(store.state.posts)
+    const posts = computed<Array<Post>>(() => {
+      const posts = Object.values(store.state.posts)
+
+      return posts.sort((v1, v2) => v1.snowflake > v2.snowflake ? -1 : 1)
+    })
     const self = computed<User | null>(() => store.state.self)
 
     const createOverlay = ref<boolean>(false)
     const content = ref<string>("")
 
-    async function fetchPosts() {
-      await store.dispatch(UserMutations.FETCH_POSTS)
-    }
-
-    await fetchPosts()
+    await store.dispatch(UserMutations.FETCH_POSTS)
 
     async function createPost() {
       createOverlay.value = false
@@ -97,13 +96,7 @@ export default defineComponent({
         const params = new URLSearchParams()
         params.append("content", content.value)
 
-        const response = await api.post(
-            "/posts",
-            params
-        )
-
-        await fetchPosts()
-        await router.push(`/posts/${response.data.snowflake}`)
+        await api.post("/posts", params)
       } catch (e) {
         console.error(e)
         alert("Something went wrong, try again later!")

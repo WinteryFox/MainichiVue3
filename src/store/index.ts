@@ -61,8 +61,6 @@ const actions: ActionTree<UserState, UserState> & Actions = {
 
     async [UserMutations.FETCH_POSTS](context: ActionContext<UserState, UserState>): Promise<void> {
         const posts: Array<Post> = (await api.get(`/posts`)).data
-        //posts.value = posts.value.concat(response.data as Array<Post>)
-        //posts.value.sort((p1, p2) => p1.snowflake > p2.snowflake ? -1 : 1)
 
         await context.dispatch(UserMutations.FETCH_USER_BATCH, posts.map(value => value.author))
 
@@ -133,6 +131,10 @@ const mutations: MutationTree<UserState> & Mutations = {
     [UserMutations.FETCH_POSTS](state: UserState, posts: Array<Post>): void {
         for (const post of posts)
             state.posts[post.snowflake.toString()] = post
+    },
+
+    [UserMutations.POST_CREATED](state: UserState, post: Post): void {
+        state.posts[post.snowflake.toString()] = post
     },
 }
 

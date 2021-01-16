@@ -8,6 +8,7 @@ const events = new EventSource(
         withCredentials: true
     }
 )
+
 events.onmessage = e => {
     const event = JSON.parse(e.data)
     const data = event.data
@@ -19,6 +20,10 @@ events.onmessage = e => {
         }
         case "LIKE_DELETED": {
             store.commit(UserMutations.LIKE_DELETED, data)
+            break
+        }
+        case "POST_CREATED": {
+            store.commit(UserMutations.POST_CREATED, data)
             break
         }
     }

@@ -62,7 +62,7 @@ import {UserState} from "@/store";
 import AvatarComponent from "@/components/AvatarComponent.vue";
 import moment from "moment";
 import DropdownComponent from "@/components/DropdownComponent.vue";
-import { copyUrl } from "@/interface/Functions"
+import {copyUrl} from "@/interface/Functions"
 
 export default defineComponent({
   components: {
@@ -79,7 +79,9 @@ export default defineComponent({
 
   async setup(props) {
     const store = useStore<UserState>()
-    const isLiked = computed<boolean>(() => store.state.likes.includes(props.post.snowflake))
+    const isLiked = computed<boolean>(() =>
+        store.state.likes.find(value => value == props.post.snowflake) != null
+    )
 
     await store.dispatch(UserMutations.FETCH_USER_BATCH, [props.post.author])
     const user: PartialUser = store.state.users[props.post.author.toString()]

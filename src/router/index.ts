@@ -4,7 +4,7 @@ import User from "@/views/User.vue"
 import Post from "@/views/Post.vue"
 import Profile from "@/views/Profile.vue"
 
-const router = createRouter({
+export default createRouter({
   history: createWebHistory(),
   routes: [
     {
@@ -27,6 +27,3 @@ const router = createRouter({
     }
   ]
 })
-
-
-export default router

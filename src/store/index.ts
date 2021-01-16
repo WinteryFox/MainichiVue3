@@ -3,6 +3,7 @@ import {api} from "@/service/api";
 import User from "@/interface/User";
 import PartialUser from "@/interface/PartialUser";
 import {UserMutations} from "@/store/actions";
+import Like from "@/interface/Like";
 
 export interface UserState {
     self: User | null;
@@ -64,6 +65,10 @@ interface Mutations<S = UserState> {
     [UserMutations.FETCH_SELF](state: S, data: FetchSelf): void;
 
     [UserMutations.FETCH_USER_BATCH](state: S, users: Array<PartialUser>): void;
+
+    [UserMutations.LIKE_CREATED](state: S, like: Like): void;
+
+    [UserMutations.LIKE_DELETED](state: S, like: Like): void;
 }
 
 const mutations: MutationTree<UserState> & Mutations = {
@@ -75,7 +80,16 @@ const mutations: MutationTree<UserState> & Mutations = {
     [UserMutations.FETCH_USER_BATCH](state: UserState, users: Array<PartialUser>) {
         for (const user of users)
             state.users[user.snowflake.toString()] = user
-    }
+    },
+
+    [UserMutations.LIKE_CREATED](state: UserState, like: Like): void {
+        if (like.liker == state.self?.snowflake)
+            state.likes.push(like.post)
+    },
+
+    [UserMutations.LIKE_DELETED](state: UserState, like: Like): void {
+        state.likes = state.likes.filter(value => value != like.post)
+    },
 }
 
 export default createStore<UserState>({

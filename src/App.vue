@@ -9,10 +9,12 @@
   </Suspense>
 </template>
 
-<style>
-#app {
-  font-family: 'Roboto', sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-}
+<style lang="sass">
+@import "~@/assets/main.sass"
+
+#app
+  font-family: 'Roboto', sans-serif
+  -webkit-font-smoothing: antialiased
+  -moz-osx-font-smoothing: grayscale
+  background-color: $white-bis
 </style>

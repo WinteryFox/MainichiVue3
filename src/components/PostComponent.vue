@@ -169,6 +169,7 @@ export default defineComponent({
   color: $black
   font-size: 18px
   overflow-wrap: break-word
+  word-break: break-word
 
 .buttons
   justify-content: space-evenly

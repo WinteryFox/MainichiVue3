@@ -1,11 +1,9 @@
 <template>
-  <div class="container">
-    <div v-for="post in posts" :key="post.id">
-      <PostComponent
-          :key="post.id"
-          :post="post"/>
-      <span class="dropdown-divider m-0"/>
-    </div>
+  <div class="feed-post" v-for="post in posts" :key="post.id">
+    <PostComponent
+        :key="post.id"
+        :post="post"/>
+    <span class="dropdown-divider m-0"/>
   </div>
 
   <ModalComponent v-model="createOverlay">
@@ -122,14 +120,9 @@ export default defineComponent({
 <style scoped lang="sass">
 @import "~@/assets/main.sass"
 
-.container
-  background-color: $white-bis
-  margin: 0
-
-@include tablet
-  .container
-    padding: 0 20%
-    max-width: 100% !important
+.feed-post
+  max-width: 562px
+  margin: 0 auto !important
 
 .buttons
   z-index: 2

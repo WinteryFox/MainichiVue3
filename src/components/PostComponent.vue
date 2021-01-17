@@ -24,7 +24,7 @@
             <i class="material-icons">comment</i>
           </template>
           <template #meta>
-            {{ post.commentCount }}
+            <span>{{ post.commentCount }}</span>
           </template>
         </ButtonComponent>
         <ButtonComponent color="rgb(224, 36, 94)"
@@ -42,6 +42,7 @@
           <template #activator="{ on }">
             <ButtonComponent color="rgb(29, 161, 242)"
                              background="rgba(29, 161, 242, 0.1)"
+                             icon-only="true"
                              v-on="on">
               <span class="icon"><i class="material-icons">more_horiz</i></span>
             </ButtonComponent>

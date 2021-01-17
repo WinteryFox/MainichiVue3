@@ -4,9 +4,7 @@
     <span class="icon">
       <slot name="default"></slot>
     </span>
-    <span class="meta">
-      <slot name="meta"></slot>
-    </span>
+    <slot name="meta"></slot>
   </button>
 </template>
 

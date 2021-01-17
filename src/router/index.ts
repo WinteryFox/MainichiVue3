@@ -12,11 +12,11 @@ export default createRouter({
       component: Home,
       children: [
         {
-          path: "/users/:snowflake",
+          path: "/users/:id",
           component: User
         },
         {
-          path: "/posts/:snowflake",
+          path: "/posts/:id",
           component: Post
         }
       ]

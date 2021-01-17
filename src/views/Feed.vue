@@ -1,8 +1,8 @@
 <template>
   <div class="container">
-    <div v-for="post in posts" :key="post.snowflake">
+    <div v-for="post in posts" :key="post.id">
       <PostComponent
-          :key="post.snowflake"
+          :key="post.id"
           :post="post"/>
       <span class="dropdown-divider m-0"/>
     </div>
@@ -37,7 +37,7 @@
             </span>
             <textarea
                 class="textarea"
-                placeholder="..."
+                placeholder="Dancing in the moonlight."
                 v-model="content"/>
           </label>
         </div>
@@ -63,7 +63,6 @@ import {api} from "@/service/api"
 import {useStore} from "vuex"
 import {UserMutations} from "@/store/actions"
 import ModalComponent from "@/components/ModalComponent.vue"
-import {useRouter} from "vue-router"
 import User from "@/interface/User"
 import {UserState} from "@/store"
 import Post from "@/interface/Post";
@@ -80,7 +79,7 @@ export default defineComponent({
     const posts = computed<Array<Post>>(() => {
       const posts = Object.values(store.state.posts)
 
-      return posts.sort((v1, v2) => v1.snowflake > v2.snowflake ? -1 : 1)
+      return posts.sort((v1, v2) => v1.id > v2.id ? -1 : 1)
     })
     const self = computed<User | null>(() => store.state.self)
 
@@ -90,17 +89,18 @@ export default defineComponent({
     await store.dispatch(UserMutations.FETCH_POSTS)
 
     async function createPost() {
-      createOverlay.value = false
-
       try {
         const params = new URLSearchParams()
         params.append("content", content.value)
 
         await api.post("/posts", params)
+        content.value = ""
       } catch (e) {
         console.error(e)
         alert("Something went wrong, try again later!")
       }
+
+      createOverlay.value = false
     }
 
     async function likePost() {

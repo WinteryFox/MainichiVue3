@@ -3,8 +3,8 @@
     <router-link class="background" :to="postUrl"/>
     <div class="box px-3 my-0 py-2 is-shadowless">
       <div class="is-flex">
-        <router-link :to="userUrl">
-          <AvatarComponent class="mr-3" :avatar="user.avatar" size="59"/>
+        <router-link :to="userUrl" class="avatar mr-3">
+          <AvatarComponent :avatar="user.avatar" size="59"/>
         </router-link>
 
         <div class="is-flex is-flex-direction-column details">
@@ -40,9 +40,9 @@
           </template>
 
           <template #default>
-            <a class="is-flex is-align-items-center dropdown-item" @click="copyUrl(`/posts/${post.snowflake}`)">
+            <a class="is-flex is-align-items-center dropdown-item" @click="copyUrl(`/posts/${post.id}`)">
               <span class="icon mr-2"><i class="material-icons">link</i></span>
-              Copy tweet link
+              Copy post link
             </a>
           </template>
         </DropdownComponent>
@@ -80,28 +80,28 @@ export default defineComponent({
   async setup(props) {
     const store = useStore<UserState>()
     const isLiked = computed<boolean>(() =>
-        store.state.likes.find(value => value == props.post.snowflake) != null
+        store.state.likes.find(value => value == props.post.id) != null
     )
 
     await store.dispatch(UserMutations.FETCH_USER_BATCH, [props.post.author])
     const user: PartialUser = store.state.users[props.post.author.toString()]
 
-    const time = Number(1577836800000n + (BigInt(props.post.snowflake) >> 22n))
+    const time = Number(1609459200000n + (BigInt(props.post.id) >> 22n))
     const date = ref(moment(time).fromNow(true))
 
     async function likePost() {
       if (!isLiked.value)
-        await api.post(`/posts/${props.post.snowflake}/likes`)
+        await api.post(`/posts/${props.post.id}/likes`)
       else
-        await api.delete(`/posts/${props.post.snowflake}/likes`)
+        await api.delete(`/posts/${props.post.id}/likes`)
     }
 
     async function comment() {
       // TODO
     }
 
-    const userUrl = `/users/${user.snowflake}`
-    const postUrl = `/posts/${props.post.snowflake}`
+    const userUrl = `/users/${user.id}`
+    const postUrl = `/posts/${props.post.id}`
 
     setInterval(() => date.value = moment(time).fromNow(true), 60000)
 
@@ -134,6 +134,11 @@ export default defineComponent({
 
 .details
   min-width: 0
+
+.avatar
+  z-index: 1
+  position: static
+  color: $grey-dark
 
 .user-row
   z-index: 1

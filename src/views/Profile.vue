@@ -126,7 +126,7 @@ export default defineComponent({
     })
 
     try {
-      const response = await api.get(`/users/${store.state.self?.snowflake}/languages`)
+      const response = await api.get(`/users/${store.state.self?.id}/languages`)
       proficient.value = (response.data.proficient as Array<string>)
           .map(value => {
             // eslint-disable-next-line @typescript-eslint/no-non-null-assertion

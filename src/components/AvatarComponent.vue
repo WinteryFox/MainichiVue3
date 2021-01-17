@@ -36,3 +36,11 @@ export default defineComponent({
   }
 })
 </script>
+
+<style scoped lang="sass">
+@import "~@/assets/main.sass"
+
+.image, .icon
+  border-radius: 50%
+  background-color: $white
+</style>

@@ -37,7 +37,7 @@ const actions: ActionTree<UserState, UserState> & Actions = {
     async [UserMutations.FETCH_SELF](context: ActionContext<UserState, UserState>): Promise<void> {
         try {
             const self = await api.get("/users/@me")
-            const likes = await api.get(`/users/${self.data.snowflake}/likes`)
+            const likes = await api.get(`/users/${self.data.id}/likes`)
             context.commit(UserMutations.FETCH_SELF, {
                 self: self.data,
                 likes: likes.data
@@ -94,14 +94,14 @@ const mutations: MutationTree<UserState> & Mutations = {
 
     [UserMutations.FETCH_USER_BATCH](state: UserState, users: Array<PartialUser>) {
         for (const user of users)
-            state.users[user.snowflake.toString()] = user
+            state.users[user.id.toString()] = user
     },
 
     [UserMutations.LIKE_CREATED](state: UserState, like: Like): void {
         if (like.post.toString() in state.posts) {
             const post = state.posts[like.post.toString()]
             state.posts[like.post.toString()] = {
-                snowflake: post.snowflake,
+                id: post.id,
                 author: post.author,
                 content: post.content,
                 likeCount: post.likeCount + 1,
@@ -109,7 +109,7 @@ const mutations: MutationTree<UserState> & Mutations = {
             }
         }
 
-        if (like.liker == state.self?.snowflake)
+        if (like.liker == state.self?.id)
             state.likes.push(like.post)
     },
 
@@ -117,7 +117,7 @@ const mutations: MutationTree<UserState> & Mutations = {
         if (like.post.toString() in state.posts) {
             const post = state.posts[like.post.toString()]
             state.posts[like.post.toString()] = {
-                snowflake: post.snowflake,
+                id: post.id,
                 author: post.author,
                 content: post.content,
                 likeCount: post.likeCount - 1,
@@ -130,11 +130,11 @@ const mutations: MutationTree<UserState> & Mutations = {
 
     [UserMutations.FETCH_POSTS](state: UserState, posts: Array<Post>): void {
         for (const post of posts)
-            state.posts[post.snowflake.toString()] = post
+            state.posts[post.id.toString()] = post
     },
 
     [UserMutations.POST_CREATED](state: UserState, post: Post): void {
-        state.posts[post.snowflake.toString()] = post
+        state.posts[post.id.toString()] = post
     },
 }
 

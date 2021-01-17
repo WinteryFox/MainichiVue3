@@ -1,5 +1,5 @@
 export default interface Post {
-    readonly snowflake: bigint;
+    readonly id: bigint;
     readonly author: bigint;
     readonly content: string;
     readonly likeCount: number;

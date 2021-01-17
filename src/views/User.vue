@@ -1,5 +1,5 @@
 <template>
-  <ModalComponent active @close="close">
+  <ModalComponent active @update:model-value="close">
     <div class="box">
       <div class="is-flex is-align-items-center">
         <AvatarComponent :avatar="user.avatar" size="96"/>
@@ -47,9 +47,9 @@ export default defineComponent({
     const router = useRouter()
     const route = useRoute()
     const store = useStore()
-    await store.dispatch(UserMutations.FETCH_USER_BATCH, [route.params.snowflake])
+    await store.dispatch(UserMutations.FETCH_USER_BATCH, [route.params.id])
 
-    const user: PartialUser = store.state.users[route.params.snowflake as string]
+    const user: PartialUser = store.state.users[route.params.id.toString()]
     const avatar = `${apiUri}/avatars/${user.avatar}.png`
     const age = computed<number | null>(() => {
       if (user.birthday != null) {

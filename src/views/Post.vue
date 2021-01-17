@@ -1,16 +1,18 @@
 <template>
-  <ModalComponent active @close="close">
+  <ModalComponent active @update:model-value="close">
     <PostComponent :post="post"/>
   </ModalComponent>
 </template>
 
 <script lang="ts">
 import ModalComponent from "@/components/ModalComponent.vue"
-import {defineComponent, ref} from "vue";
+import {computed, defineComponent} from "vue";
 import {useRoute, useRouter} from "vue-router";
 import PostComponent from "@/components/PostComponent.vue";
-import {api} from "@/service/api";
 import Post from "@/interface/Post";
+import {useStore} from "vuex";
+import {UserState} from "@/store";
+import {UserMutations} from "@/store/actions";
 
 export default defineComponent({
   name: "Post",
@@ -18,17 +20,13 @@ export default defineComponent({
   components: {PostComponent, ModalComponent},
 
   async setup() {
+    const store = useStore<UserState>()
     const router = useRouter()
     const route = useRoute()
-    const post = ref<Post | null>(null);
+    const post = computed<Post | null>(() => store.state.posts[route.params.id.toString()]);
 
-    try {
-      const response = await api.get(`/posts/${route.params.snowflake}`)
-      post.value = response.data
-    } catch (e) {
-      alert("Something went wrong!")
-      await router.push("/")
-    }
+    if (post.value == null)
+      await store.dispatch(UserMutations.FETCH_POSTS, route.params.id)
 
     function close() {
       router.push("/")

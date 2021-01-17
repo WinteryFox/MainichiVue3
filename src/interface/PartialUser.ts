@@ -1,5 +1,5 @@
 export default interface PartialUser {
-    readonly snowflake: bigint;
+    readonly id: bigint;
     readonly username: string;
     readonly birthday: string;
     readonly gender: string;

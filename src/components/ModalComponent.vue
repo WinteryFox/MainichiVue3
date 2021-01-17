@@ -17,7 +17,7 @@
 </template>
 
 <script lang="ts">
-import {defineComponent, ref} from "vue";
+import {computed, defineComponent} from "vue";
 
 export default defineComponent({
   props: {
@@ -29,19 +29,20 @@ export default defineComponent({
   },
 
   emits: [
-    "close"
+    "update:modelValue"
   ],
 
   setup(props, {emit}) {
-    const isActive = ref<boolean>(!!props.modelValue || props.active)
+    const isActive = computed<boolean>(() => Boolean(props.modelValue) || props.active)
 
     const handlers = {
-      click: () => isActive.value = true
+      click: () => {
+        emit("update:modelValue", true)
+      }
     }
 
     function close() {
-      isActive.value = false
-      emit("close")
+      emit("update:modelValue", false)
     }
 
     return {

@@ -1,5 +1,5 @@
 export default interface User {
-    readonly snowflake: bigint;
+    readonly id: bigint;
     readonly email: string;
     readonly username: string;
     readonly birthday: string;

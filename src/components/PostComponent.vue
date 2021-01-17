@@ -18,25 +18,33 @@
       </div>
 
       <div class="buttons mt-2">
-        <button class="button is-rounded green" @click="comment">
-          <span class="icon"><i class="material-icons">comment</i></span>
-          <span>{{ post.commentCount }}</span>
-        </button>
-        <button class="button is-rounded pink" @click="likePost">
-          <span class="icon">
+        <ButtonComponent color="rgb(23, 191, 99)"
+                         background="rgba(23, 191, 99, 0.1)">
+          <template #default>
+            <i class="material-icons">comment</i>
+          </template>
+          <template #meta>
+            {{ post.commentCount }}
+          </template>
+        </ButtonComponent>
+        <ButtonComponent color="rgb(224, 36, 94)"
+                         background="rgba(224, 36, 94, 0.1)"
+                         @click="likePost">
+          <template #default>
             <i class="material-icons liked" v-if="isLiked">favorite</i>
             <i class="material-icons-outlined" v-else>favorite</i>
-          </span>
-          <span :class="{ 'liked': isLiked }">
-            {{ post.likeCount }}
-          </span>
-        </button>
+          </template>
+          <template #meta>
+            <span :class="{ 'liked': isLiked }">{{ post.likeCount }}</span>
+          </template>
+        </ButtonComponent>
         <DropdownComponent>
           <template #activator="{ on }">
-            <button class="button is-rounded icon-only cyan"
-                    v-on="on">
+            <ButtonComponent color="rgb(29, 161, 242)"
+                             background="rgba(29, 161, 242, 0.1)"
+                             v-on="on">
               <span class="icon"><i class="material-icons">more_horiz</i></span>
-            </button>
+            </ButtonComponent>
           </template>
 
           <template #default>
@@ -63,9 +71,11 @@ import AvatarComponent from "@/components/AvatarComponent.vue";
 import moment from "moment";
 import DropdownComponent from "@/components/DropdownComponent.vue";
 import {copyUrl} from "@/interface/Functions"
+import ButtonComponent from "@/components/ButtonComponent.vue";
 
 export default defineComponent({
   components: {
+    ButtonComponent,
     DropdownComponent,
     AvatarComponent
   },
@@ -163,66 +173,6 @@ export default defineComponent({
 .buttons
   justify-content: space-evenly
 
-  .button
-    flex-basis: 59px
-    border: none
-    transition-property: color
-    transition-duration: 0.2s
-    padding: 0
-
-    &.icon-only
-      flex-basis: 38px
-      padding: 0 !important
-
-    .icon
-      width: 38px
-      height: 38px
-      border-radius: 50%
-
-    &:focus
-      box-shadow: none
-
-    &:hover
-      .icon
-        transition-property: background-color
-        transition-duration: 0.2s
-
-    &.pink
-      &:hover, &:focus
-        color: $pink
-        outline-style: none
-        box-shadow: none
-
-        .icon
-          background-color: rgba($pink, 0.1)
-
-      &:focus .icon
-        box-shadow: rgba($pink, 0.5) 0 0 0 2px inset
-
-    &.cyan
-      &:hover, &:focus
-        color: $cyan
-        outline-style: none
-        box-shadow: none
-
-        .icon
-          background-color: rgba($cyan, 0.1)
-
-      &:focus .icon
-        box-shadow: rgba($cyan, 0.5) 0 0 0 2px inset
-
-    &.green
-      &:hover, &:focus
-        color: $green
-        outline-style: none
-        box-shadow: none
-
-        .icon
-          background-color: rgba($green, 0.1)
-
-      &:focus .icon
-        box-shadow: rgba($green, 0.5) 0 0 0 2px inset
-
-    .liked
-      color: $pink
+.liked
+  color: $pink
 </style>

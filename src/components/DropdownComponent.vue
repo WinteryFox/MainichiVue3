@@ -1,5 +1,5 @@
 <template>
-  <div class="dropdown"
+  <div class="dropdown is-right"
        :class="{ 'is-active': isActive }">
     <div class="dropdown-trigger"
          ref="dropdownRef">

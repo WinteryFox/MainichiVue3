@@ -2,29 +2,20 @@ import {apiUri} from "@/service/api";
 import {UserMutations} from "@/store/actions";
 import store from "@/store"
 
-const events = new EventSource(
+const events: Record<string, UserMutations> = {
+    "LIKE_CREATED": UserMutations.LIKE_CREATED,
+    "LIKE_DELETED": UserMutations.LIKE_DELETED,
+    "POST_CREATED": UserMutations.POST_CREATED
+}
+
+const publisher = new EventSource(
     `${apiUri}/events`,
     {
         withCredentials: true
     }
 )
 
-events.onmessage = e => {
+publisher.onmessage = e => {
     const event = JSON.parse(e.data)
-    const data = event.data
-
-    switch (event.type) {
-        case "LIKE_CREATED": {
-            store.commit(UserMutations.LIKE_CREATED, data)
-            break
-        }
-        case "LIKE_DELETED": {
-            store.commit(UserMutations.LIKE_DELETED, data)
-            break
-        }
-        case "POST_CREATED": {
-            store.commit(UserMutations.POST_CREATED, data)
-            break
-        }
-    }
+    store.commit(events[event.type], event.data)
 }

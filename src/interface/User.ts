@@ -1,5 +1,5 @@
 export default interface User {
-    readonly id: bigint;
+    readonly id: string;
     readonly email: string;
     readonly username: string;
     readonly birthday: string;

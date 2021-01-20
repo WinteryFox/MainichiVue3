@@ -72,6 +72,18 @@ export default defineComponent({
 
     await store.dispatch(UserMutations.FETCH_POSTS)
 
+    function input() {
+      if (button.value != null && progress.value != null) {
+        button.value.disabled = content.value.length <= 16 || content.value.length >= 1024;
+        progress.value.style.width = `${Math.min(content.value.length / 17 * 100, 100)}%`
+
+        if (button.value.disabled)
+          progress.value.classList.remove("active")
+        else
+          progress.value.classList.add("active")
+      }
+    }
+
     async function createPost() {
       try {
         const params = new URLSearchParams()
@@ -85,22 +97,11 @@ export default defineComponent({
       }
 
       content.value = ""
+      input()
     }
 
     async function likePost() {
       await api.post("/posts/")
-    }
-
-    function input() {
-      if (button.value != null && progress.value != null) {
-        button.value.disabled = content.value.length <= 16 || content.value.length >= 1024;
-        progress.value.style.width = `${Math.min(content.value.length / 17 * 100, 100)}%`
-
-        if (button.value.disabled)
-          progress.value.classList.remove("active")
-        else
-          progress.value.classList.add("active")
-      }
     }
 
     return {

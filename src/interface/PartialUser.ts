@@ -1,5 +1,5 @@
 export default interface PartialUser {
-    readonly id: bigint;
+    readonly id: string;
     readonly username: string;
     readonly birthday: string;
     readonly gender: string;

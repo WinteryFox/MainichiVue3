@@ -10,7 +10,7 @@ export interface UserState {
     self: User | null;
     users: Record<string, PartialUser>;
     posts: Record<string, Post>;
-    likes: Array<bigint>;
+    likes: Array<string>;
 }
 
 const state: UserState = {
@@ -22,7 +22,7 @@ const state: UserState = {
 
 interface FetchSelf {
     readonly self: User;
-    readonly likes: Array<bigint>;
+    readonly likes: Array<string>;
 }
 
 interface Actions {

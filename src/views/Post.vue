@@ -1,7 +1,12 @@
 <template>
   <ModalComponent active @update:model-value="close">
-    <PostComponent :post="post"/>
-    <CommentComponent v-for="comment in comments" :comment="comment" :key="comment.id"/>
+    <div class="box">
+      <PostComponent :post="post"/>
+      <div v-for="comment in comments" :key="comment.id">
+        <div class="dropdown-divider"/>
+        <CommentComponent :comment="comment"/>
+      </div>
+    </div>
   </ModalComponent>
 </template>
 

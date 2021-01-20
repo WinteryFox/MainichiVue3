@@ -1,22 +1,18 @@
 <template>
-  <span class="dropdown-divider"/>
-  <div class="box">
-    <div class="is-flex">
-      <router-link :to="`/users/${commenter.id}`" class="avatar mr-3">
-        <AvatarComponent :avatar="commenter.avatar" size="59"/>
+  <div class="is-flex">
+    <router-link :to="`/users/${commenter.id}`" class="avatar mr-3">
+      <AvatarComponent :avatar="commenter.avatar" size="59"/>
+    </router-link>
+
+    <div class="is-flex is-flex-direction-column details">
+      <router-link :to="`/users/${commenter.id}`" class="is-flex user-row">
+        <span class="username">{{ commenter.username }}</span>
+        <span class="ml-2 time has-text-grey">· {{ date }}</span>
       </router-link>
 
-      <div class="is-flex is-flex-direction-column details">
-        <router-link :to="`/users/${commenter.id}`" class="is-flex user-row">
-          <span class="username">{{ commenter.username }}</span>
-          <span class="ml-2 time has-text-grey">· {{ date }}</span>
-        </router-link>
-
-        <div class="content" tabindex="0">{{ comment.content }}</div>
-      </div>
+      <div class="content" tabindex="0">{{ comment.content }}</div>
     </div>
   </div>
-
 </template>
 
 <script lang="ts">

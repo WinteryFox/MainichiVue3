@@ -1,6 +1,7 @@
 <template>
   <ModalComponent active @update:model-value="close">
     <PostComponent :post="post"/>
+    <CommentComponent v-for="comment in comments" :comment="comment" :key="comment.id"/>
   </ModalComponent>
 </template>
 
@@ -13,11 +14,17 @@ import Post from "@/interface/Post";
 import {useStore} from "vuex";
 import {UserState} from "@/store";
 import {UserMutations} from "@/store/actions";
+import {api} from "@/service/api";
+import CommentComponent from "@/components/CommentComponent.vue";
 
 export default defineComponent({
   name: "Post",
 
-  components: {PostComponent, ModalComponent},
+  components: {
+    PostComponent,
+    ModalComponent,
+    CommentComponent
+  },
 
   async setup() {
     const store = useStore<UserState>()
@@ -28,13 +35,16 @@ export default defineComponent({
     if (post.value == null)
       await store.dispatch(UserMutations.FETCH_POSTS, route.params.id)
 
+    const comments = (await api.get(`/posts/${post.value?.id}/comments`)).data
+
     function close() {
       router.push("/")
     }
 
     return {
       close,
-      post
+      post,
+      comments
     }
   }
 })

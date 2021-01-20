@@ -5,7 +5,7 @@ import store from "@/store"
 const events: Record<string, UserMutations> = {
     "LIKE_CREATED": UserMutations.LIKE_CREATED,
     "LIKE_DELETED": UserMutations.LIKE_DELETED,
-    "POST_CREATED": UserMutations.POST_CREATED
+    "POST_CREATED": UserMutations.POST_CREATED,
 }
 
 const publisher = new EventSource(

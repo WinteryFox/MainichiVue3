@@ -18,15 +18,43 @@
       </div>
 
       <div class="buttons mt-2">
-        <ButtonComponent color="rgb(23, 191, 99)"
-                         background="rgba(23, 191, 99, 0.1)">
-          <template #default>
-            <i class="material-icons">comment</i>
+        <ModalComponent v-model="commentOverlay">
+          <template v-slot:activator="{ on }">
+            <ButtonComponent color="rgb(23, 191, 99)"
+                             background="rgba(23, 191, 99, 0.1)"
+                             v-on="on">
+              <template #default>
+                <i class="material-icons">comment</i>
+              </template>
+              <template #meta>
+                <span>{{ post.commentCount }}</span>
+              </template>
+            </ButtonComponent>
           </template>
-          <template #meta>
-            <span>{{ post.commentCount }}</span>
-          </template>
-        </ButtonComponent>
+          <div class="box">
+            <div class="field">
+              <div class="control">
+                <label>
+                  <span class="subtitle">Time to write your comment</span>
+                  <textarea
+                      class="textarea"
+                      placeholder="Comment here...."
+                      v-model="commentContent"/>
+                </label>
+              </div>
+            </div>
+
+            <div class="field is-grouped">
+              <div class="control">
+                <button
+                    class="button is-link"
+                    @click="comment">
+                  Create
+                </button>
+              </div>
+            </div>
+          </div>
+        </ModalComponent>
         <ButtonComponent color="rgb(224, 36, 94)"
                          background="rgba(224, 36, 94, 0.1)"
                          @click="likePost">
@@ -73,12 +101,14 @@ import moment from "moment";
 import DropdownComponent from "@/components/DropdownComponent.vue";
 import {copyUrl} from "@/interface/Functions"
 import ButtonComponent from "@/components/ButtonComponent.vue";
+import ModalComponent from "@/components/ModalComponent.vue";
 
 export default defineComponent({
   components: {
     ButtonComponent,
     DropdownComponent,
-    AvatarComponent
+    AvatarComponent,
+    ModalComponent
   },
 
   props: {
@@ -100,6 +130,9 @@ export default defineComponent({
     const time = Number(1609459200000n + (BigInt(props.post.id) >> 22n))
     const date = ref(moment(time).fromNow(true))
 
+    const commentOverlay = ref<boolean>(false)
+    const commentContent = ref<string>("")
+
     async function likePost() {
       if (!isLiked.value)
         await api.post(`/posts/${props.post.id}/likes`)
@@ -108,7 +141,10 @@ export default defineComponent({
     }
 
     async function comment() {
-      // TODO
+      await api.post(`/posts/${props.post.id}/comments`, {
+        content: commentContent.value
+      })
+      commentOverlay.value = false
     }
 
     const userUrl = `/users/${user.id}`
@@ -126,7 +162,9 @@ export default defineComponent({
       date,
       postUrl,
       userUrl,
-      copyUrl
+      copyUrl,
+      commentOverlay,
+      commentContent
     }
   }
 })

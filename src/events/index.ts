@@ -6,6 +6,7 @@ const events: Record<string, UserMutations> = {
     "LIKE_CREATED": UserMutations.LIKE_CREATED,
     "LIKE_DELETED": UserMutations.LIKE_DELETED,
     "POST_CREATED": UserMutations.POST_CREATED,
+    "COMMENT_CREATED": UserMutations.COMMENT_CREATED,
 }
 
 const publisher = new EventSource(

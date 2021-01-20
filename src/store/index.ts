@@ -5,6 +5,7 @@ import PartialUser from "@/interface/PartialUser";
 import {UserMutations} from "@/store/actions";
 import Like from "@/interface/Like";
 import Post from "@/interface/Post";
+import Comment from "@/interface/Comment";
 
 export interface UserState {
     self: User | null;
@@ -84,6 +85,8 @@ interface Mutations<S = UserState> {
     [UserMutations.LIKE_DELETED](state: S, like: Like): void;
 
     [UserMutations.FETCH_POSTS](state: S, posts: Array<Post>): void;
+
+    [UserMutations.COMMENT_CREATED](state: S, comment: Comment): void;
 }
 
 const mutations: MutationTree<UserState> & Mutations = {
@@ -136,6 +139,17 @@ const mutations: MutationTree<UserState> & Mutations = {
     [UserMutations.POST_CREATED](state: UserState, post: Post): void {
         state.posts[post.id.toString()] = post
     },
+
+    [UserMutations.COMMENT_CREATED](state: UserState, comment: Comment): void {
+        const post = state.posts[comment.post]
+        state.posts[comment.post] = {
+            id: post.id,
+            author: post.author,
+            content: post.content,
+            likeCount: post.likeCount,
+            commentCount: post.commentCount + 1
+        }
+    }
 }
 
 export default createStore<UserState>({

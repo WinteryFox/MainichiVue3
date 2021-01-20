@@ -1,7 +1,7 @@
 <template>
   <div class="post">
     <router-link class="background" :to="postUrl"/>
-    <div class="box px-3 my-0 py-2 is-shadowless">
+    <div class="py-2">
       <div class="is-flex">
         <router-link :to="userUrl" class="avatar mr-3">
           <AvatarComponent :avatar="user.avatar" size="59"/>

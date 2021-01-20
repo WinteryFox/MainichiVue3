@@ -1,88 +1,74 @@
 <template>
-  <div class="feed-post" v-for="post in posts" :key="post.id">
-    <PostComponent
-        :key="post.id"
-        :post="post"/>
-    <span class="dropdown-divider m-0"/>
-  </div>
-
-  <ModalComponent v-model="createOverlay">
-    <template v-slot:activator="{ on }">
-      <div class="buttons m-5">
-        <button
-            v-if="self != null"
-            class="button is-rounded is-primary is-large px-5"
-            v-on="on">
-          <span class="icon"><i class="material-icons">add</i></span>
-        </button>
-        <button
-            v-else
-            class="button is-rounded is-primary is-large px-5
-            has-tooltip-danger has-tooltip-arrow has-tooltip-left"
-            data-tooltip="Login to create a post"
-            disabled>
-          <span class="icon"><i class="material-icons">add</i></span>
-        </button>
-      </div>
-    </template>
-
-    <div class="box">
+  <div class="box">
+    <div class="is-flex">
+      <AvatarComponent tabindex="0" class="mr-3" size="59" :avatar="self?.avatar"/>
       <div class="field">
         <div class="control">
           <label>
-            <span class="subtitle">
-              Time to write your beautiful post
-            </span>
-            <textarea
-                class="textarea"
-                placeholder="Dancing in the moonlight."
-                v-model="content"/>
+            <textarea autofocus
+                      spellcheck="true"
+                      rows="2"
+                      cols="100"
+                      class="textarea"
+                      placeholder="What's happening?"
+                      ref="textarea"
+                      v-model="content"
+                      @input="input"/>
           </label>
         </div>
-      </div>
 
-      <div class="field is-grouped">
-        <div class="control">
-          <button
-              class="button is-link"
-              @click="createPost">
-            Create
+        <div class="control is-pulled-right mb-3">
+          <button class="button is-rounded"
+                  @click="createPost"
+                  ref="button"
+                  disabled>
+            <span class="progress-bar" ref="progress"/>
+            Create post
           </button>
         </div>
       </div>
     </div>
-  </ModalComponent>
+    <span class="dropdown-divider m-0"/>
+    <div v-for="post in posts" :key="post.id">
+      <PostComponent
+          :key="post.id"
+          :post="post"/>
+      <span class="dropdown-divider m-0"/>
+    </div>
+  </div>
 </template>
 
 <script lang="ts">
-import {computed, defineComponent, ref} from "vue"
+import {computed, defineComponent, onMounted, ref} from "vue"
 import PostComponent from "@/components/PostComponent.vue"
 import {api} from "@/service/api"
 import {useStore} from "vuex"
 import {UserMutations} from "@/store/actions"
-import ModalComponent from "@/components/ModalComponent.vue"
 import User from "@/interface/User"
 import {UserState} from "@/store"
 import Post from "@/interface/Post";
+import AvatarComponent from "@/components/AvatarComponent.vue";
 
 export default defineComponent({
   components: {
-    ModalComponent,
+    AvatarComponent,
     PostComponent
   },
 
   async setup() {
     const store = useStore<UserState>()
-
     const posts = computed<Array<Post>>(() => {
       const posts = Object.values(store.state.posts)
 
       return posts.sort((v1, v2) => v1.id > v2.id ? -1 : 1)
     })
     const self = computed<User | null>(() => store.state.self)
-
-    const createOverlay = ref<boolean>(false)
     const content = ref<string>("")
+    const textarea = ref<HTMLInputElement | null>(null)
+    const button = ref<HTMLButtonElement | null>(null)
+    const progress = ref<HTMLDivElement | null>(null)
+
+    onMounted(() => textarea.value?.focus())
 
     await store.dispatch(UserMutations.FETCH_POSTS)
 
@@ -98,20 +84,35 @@ export default defineComponent({
         alert("Something went wrong, try again later!")
       }
 
-      createOverlay.value = false
+      content.value = ""
     }
 
     async function likePost() {
       await api.post("/posts/")
     }
 
+    function input() {
+      if (button.value != null && progress.value != null) {
+        button.value.disabled = content.value.length <= 16 || content.value.length >= 1024;
+        progress.value.style.width = `${Math.min(content.value.length / 17 * 100, 100)}%`
+
+        if (button.value.disabled)
+          progress.value.classList.remove("active")
+        else
+          progress.value.classList.add("active")
+      }
+    }
+
     return {
       posts,
       self,
-      createOverlay,
       content,
       likePost,
-      createPost
+      createPost,
+      textarea,
+      input,
+      button,
+      progress
     }
   }
 })
@@ -120,13 +121,32 @@ export default defineComponent({
 <style scoped lang="sass">
 @import "~@/assets/main.sass"
 
-.feed-post
-  max-width: 562px
-  margin: 0 auto !important
+.button
+  font-size: 18px
+  background: transparent !important
+  color: $black
+  z-index: 1
+  border: none
 
-.buttons
-  z-index: 2
-  position: fixed
-  right: 0
-  bottom: 0
+.progress-bar
+  position: absolute
+  height: 100%
+  background-color: rgba($turquoise, 0.5)
+  border-radius: 100px
+  z-index: -1
+
+.active
+  background-color: rgba($turquoise, 0.6)
+
+.textarea
+  border: none
+  resize: none
+  margin-bottom: 0.75em
+
+  &:focus
+    box-shadow: 0 0 2px 2px rgba($cyan, 0.5)
+
+.box
+  max-width: 568px
+  margin: 0 auto !important
 </style>

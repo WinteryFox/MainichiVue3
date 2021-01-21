@@ -1,7 +1,9 @@
 <template>
   <div class="box feed" v-if="self != null">
     <div class="is-flex">
-      <AvatarComponent tabindex="0" class="mr-3" size="59" :avatar="self?.avatar"/>
+      <router-link :to="`/users/${self.id}`">
+        <AvatarComponent tabindex="0" class="mr-3" size="59" :avatar="self?.avatar"/>
+      </router-link>
       <div class="field">
         <div class="control">
           <label>

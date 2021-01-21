@@ -21,11 +21,6 @@ const state: UserState = {
     likes: [],
 }
 
-interface FetchSelf {
-    readonly self: User;
-    readonly likes: Array<string>;
-}
-
 interface Actions {
     [UserMutations.FETCH_SELF](context: ActionContext<UserState, UserState>): Promise<void>;
 
@@ -39,10 +34,8 @@ const actions: ActionTree<UserState, UserState> & Actions = {
         try {
             const self = await api.get("/users/@me")
             const likes = await api.get(`/users/${self.data.id}/likes`)
-            context.commit(UserMutations.FETCH_SELF, {
-                self: self.data,
-                likes: likes.data
-            })
+            context.commit(UserMutations.FETCH_SELF, self.data)
+            context.commit(UserMutations.FETCH_LIKES, likes.data)
         } catch (_) {
         }
 
@@ -76,7 +69,9 @@ interface Getters<S = UserState> {
 export const getters: GetterTree<UserState, UserState> & Getters = {}
 
 interface Mutations<S = UserState> {
-    [UserMutations.FETCH_SELF](state: S, data: FetchSelf): void;
+    [UserMutations.FETCH_SELF](state: S, self: User | null): void;
+
+    [UserMutations.FETCH_LIKES](state: S, likes: Array<string>): void;
 
     [UserMutations.FETCH_USER_BATCH](state: S, users: Array<PartialUser>): void;
 
@@ -90,9 +85,12 @@ interface Mutations<S = UserState> {
 }
 
 const mutations: MutationTree<UserState> & Mutations = {
-    [UserMutations.FETCH_SELF](state: UserState, data: FetchSelf) {
-        state.self = data.self;
-        state.likes = data.likes;
+    [UserMutations.FETCH_SELF](state: UserState, self: User | null): void {
+        state.self = self;
+    },
+
+    [UserMutations.FETCH_LIKES](state: UserState, likes: Array<string>): void {
+        state.likes = likes
     },
 
     [UserMutations.FETCH_USER_BATCH](state: UserState, users: Array<PartialUser>) {

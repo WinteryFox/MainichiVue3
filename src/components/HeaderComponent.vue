@@ -101,7 +101,7 @@ export default defineComponent({
         document.addEventListener("click", hideListener)
     }
 
-    async function login() {
+    function login() {
       const params = new URLSearchParams()
       params.append("redirect_uri", window.location.href)
 

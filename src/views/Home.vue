@@ -1,25 +1,23 @@
 <template>
   <Suspense>
     <template #default>
-      <div>
-        <Feed/>
-
-        <Suspense>
-          <template #default>
-            <router-view/>
-          </template>
-          <template #fallback>
-            <LoaderComponent
-                title="PenWeb"
-                subtitle="Fetching..."/>
-          </template>
-        </Suspense>
-      </div>
+      <Feed/>
     </template>
     <template #fallback>
       <LoaderComponent
           title="PenWeb"
           subtitle="Now loading"/>
+    </template>
+  </Suspense>
+
+  <Suspense>
+    <template #default>
+      <router-view/>
+    </template>
+    <template #fallback>
+      <LoaderComponent
+          title="PenWeb"
+          subtitle="Fetching..."/>
     </template>
   </Suspense>
 </template>

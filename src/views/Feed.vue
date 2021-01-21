@@ -1,5 +1,5 @@
 <template>
-  <div class="box">
+  <div class="box feed" v-if="self != null">
     <div class="is-flex">
       <AvatarComponent tabindex="0" class="mr-3" size="59" :avatar="self?.avatar"/>
       <div class="field">
@@ -36,12 +36,24 @@
       <span class="dropdown-divider m-0"/>
     </div>
   </div>
+
+  <div class="login" v-else>
+    <span class="is-size-3">
+      It's time to one-up your language knowledge!
+    </span>
+    <label class="is-size-5 mt-5">
+      Get started!
+    </label>
+    <a class="button is-info is-large is-rounded" @click="login">
+      Login
+    </a>
+  </div>
 </template>
 
 <script lang="ts">
 import {computed, defineComponent, onMounted, ref} from "vue"
 import PostComponent from "@/components/PostComponent.vue"
-import {api} from "@/service/api"
+import {api, apiUri} from "@/service/api"
 import {useStore} from "vuex"
 import {UserMutations} from "@/store/actions"
 import User from "@/interface/User"
@@ -70,7 +82,8 @@ export default defineComponent({
 
     onMounted(() => textarea.value?.focus())
 
-    await store.dispatch(UserMutations.FETCH_POSTS)
+    if (posts.value.length == 0)
+      await store.dispatch(UserMutations.FETCH_POSTS)
 
     function input() {
       if (button.value != null && progress.value != null) {
@@ -104,6 +117,13 @@ export default defineComponent({
       await api.post("/posts/")
     }
 
+    function login() {
+      const params = new URLSearchParams()
+      params.append("redirect_uri", window.location.href)
+
+      window.location.href = `${apiUri}/oauth2/authorization/google?` + params.toString()
+    }
+
     return {
       posts,
       self,
@@ -113,7 +133,8 @@ export default defineComponent({
       textarea,
       input,
       button,
-      progress
+      progress,
+      login
     }
   }
 })
@@ -122,32 +143,42 @@ export default defineComponent({
 <style scoped lang="sass">
 @import "~@/assets/main.sass"
 
-.button
-  font-size: 18px
-  background: transparent !important
-  color: $black
-  z-index: 1
-  border: none
+.login
+  display: flex
+  flex-direction: column
+  align-items: center
+  justify-content: center
+  margin: auto 18px
 
-.progress-bar
-  position: absolute
-  height: 100%
-  background-color: rgba($turquoise, 0.5)
-  border-radius: 100px
-  z-index: -1
+  .button
+    width: 13em
 
-.active
-  background-color: rgba($turquoise, 0.6)
-
-.textarea
-  border: none
-  resize: none
-  margin-bottom: 0.75em
-
-  &:focus
-    box-shadow: 0 0 2px 2px rgba($cyan, 0.5)
-
-.box
+.feed
   max-width: 568px
   margin: 0 auto !important
+
+  .button
+    font-size: 18px
+    background: transparent !important
+    color: $black
+    z-index: 1
+    border: none
+
+  .progress-bar
+    position: absolute
+    height: 100%
+    background-color: rgba($turquoise, 0.5)
+    border-radius: 100px
+    z-index: -1
+
+  .active
+    background-color: rgba($turquoise, 0.6)
+
+  .textarea
+    border: none
+    resize: none
+    margin-bottom: 0.75em
+
+    &:focus
+      box-shadow: 0 0 2px 2px rgba($cyan, 0.5)
 </style>

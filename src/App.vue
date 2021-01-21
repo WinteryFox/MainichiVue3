@@ -24,7 +24,14 @@ export default defineComponent({
 <style lang="sass">
 @import "~@/assets/main.sass"
 
+html, body
+  height: 100%
+
 #app
+  display: flex
+  flex-direction: column
+  flex-basis: auto
+  min-height: 100%
   font-family: 'Roboto', sans-serif
   -webkit-font-smoothing: antialiased
   -moz-osx-font-smoothing: grayscale

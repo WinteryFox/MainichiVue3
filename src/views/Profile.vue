@@ -222,7 +222,6 @@ export default defineComponent({
   border-radius: 50%
   border: 1px solid #ccc
   float: left
-  margin-right: 7em
   background-color: #f0f0f0
   color: $black
 

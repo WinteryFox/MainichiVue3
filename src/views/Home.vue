@@ -2,7 +2,6 @@
   <Suspense>
     <template #default>
       <div>
-        <HeaderComponent/>
         <Feed/>
 
         <Suspense>
@@ -28,7 +27,6 @@
 <script lang="ts">
 import {defineComponent} from 'vue';
 import Feed from '@/views/Feed.vue';
-import HeaderComponent from "@/components/HeaderComponent.vue";
 import LoaderComponent from "@/components/LoaderComponent.vue";
 
 export default defineComponent({
@@ -36,8 +34,7 @@ export default defineComponent({
 
   components: {
     LoaderComponent,
-    Feed,
-    HeaderComponent
+    Feed
   }
 });
 </script>

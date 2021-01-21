@@ -2,6 +2,9 @@
   <div class="grid">
     <div class="column"></div>
     <div class="column">
+      <router-link class="btndiscard" to="/">
+        <span class="icon"><i class="material-icons">arrow_back_ios_new</i></span>
+      </router-link>
       <h1>Profile</h1>
       <h3>Upload or change your profile picture</h3>
       <div class="photo">
@@ -209,6 +212,24 @@ export default defineComponent({
 
 <style scoped lang="sass">
 @import "~@/assets/main.sass"
+
+.btndiscard
+  display: flex
+  align-items: center
+  justify-content: center
+  width: 40px
+  height: 40px
+  border-radius: 50%
+  border: 1px solid #ccc
+  float: left
+  margin-right: 7em
+  background-color: #f0f0f0
+  color: $black
+
+  &:hover
+    background-color: #F5B22E
+    border: 1px double #F5B22E
+    color: white
 
 section
   position: relative

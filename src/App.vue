@@ -1,4 +1,5 @@
 <template>
+  <HeaderComponent/>
   <Suspense>
     <template #default>
       <router-view/>
@@ -8,6 +9,17 @@
     </template>
   </Suspense>
 </template>
+
+<script lang="ts">
+import {defineComponent} from "vue";
+import HeaderComponent from "@/components/HeaderComponent.vue";
+
+export default defineComponent({
+  components: {
+    HeaderComponent
+  }
+})
+</script>
 
 <style lang="sass">
 @import "~@/assets/main.sass"

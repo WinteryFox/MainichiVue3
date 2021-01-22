@@ -24,7 +24,7 @@ const state: UserState = {
 interface Actions {
     [UserMutations.FETCH_SELF](context: ActionContext<UserState, UserState>): Promise<void>;
 
-    [UserMutations.FETCH_USER_BATCH](context: ActionContext<UserState, UserState>, ids: Array<string | bigint>): Promise<void>;
+    [UserMutations.FETCH_USER_BATCH](context: ActionContext<UserState, UserState>, ids: Set<string>): Promise<void>;
 
     [UserMutations.FETCH_POSTS](context: ActionContext<UserState, UserState>): Promise<void>;
 }
@@ -42,11 +42,11 @@ const actions: ActionTree<UserState, UserState> & Actions = {
         return Promise.resolve()
     },
 
-    async [UserMutations.FETCH_USER_BATCH](context: ActionContext<UserState, UserState>, ids: Array<string | bigint>): Promise<void> {
-        const missing = ids.filter(id => !(id in context.state.users))
+    async [UserMutations.FETCH_USER_BATCH](context: ActionContext<UserState, UserState>, ids: Set<string>): Promise<void> {
+        const missing = Array.from(ids).filter(id => !(id in context.state.users))
 
         if (missing.length > 0) {
-            const response = await api.get(`/users/${ids.toString()}`) // TODO: Error handling
+            const response = await api.get(`/users/${missing.toString()}`)
             context.commit(UserMutations.FETCH_USER_BATCH, response.data)
         }
 
@@ -57,8 +57,9 @@ const actions: ActionTree<UserState, UserState> & Actions = {
         const posts: Array<Post> = (await api.get(`/posts`)).data
 
         await context.dispatch(UserMutations.FETCH_USER_BATCH, posts.map(value => value.author))
-
         context.commit(UserMutations.FETCH_POSTS, posts)
+
+        return Promise.resolve()
     },
 }
 
@@ -95,13 +96,13 @@ const mutations: MutationTree<UserState> & Mutations = {
 
     [UserMutations.FETCH_USER_BATCH](state: UserState, users: Array<PartialUser>) {
         for (const user of users)
-            state.users[user.id.toString()] = user
+            state.users[user.id] = user
     },
 
     [UserMutations.LIKE_CREATED](state: UserState, like: Like): void {
-        if (like.post.toString() in state.posts) {
-            const post = state.posts[like.post.toString()]
-            state.posts[like.post.toString()] = {
+        const post = state.posts[like.post]
+        if (post) {
+            state.posts[like.post] = {
                 id: post.id,
                 author: post.author,
                 content: post.content,
@@ -115,9 +116,9 @@ const mutations: MutationTree<UserState> & Mutations = {
     },
 
     [UserMutations.LIKE_DELETED](state: UserState, like: Like): void {
-        if (like.post.toString() in state.posts) {
-            const post = state.posts[like.post.toString()]
-            state.posts[like.post.toString()] = {
+        const post = state.posts[like.post]
+        if (post) {
+            state.posts[like.post] = {
                 id: post.id,
                 author: post.author,
                 content: post.content,
@@ -126,27 +127,30 @@ const mutations: MutationTree<UserState> & Mutations = {
             }
         }
 
-        state.likes = state.likes.filter(value => value != like.post)
+        if (like.liker == state.self?.id)
+            state.likes = state.likes.filter(value => value != like.post)
     },
 
     [UserMutations.FETCH_POSTS](state: UserState, posts: Array<Post>): void {
         for (const post of posts)
-            state.posts[post.id.toString()] = post
+            state.posts[post.id] = post
     },
 
     [UserMutations.POST_CREATED](state: UserState, post: Post): void {
-        state.posts[post.id.toString()] = post
+        state.posts[post.id] = post
     },
 
     [UserMutations.COMMENT_CREATED](state: UserState, comment: Comment): void {
         const post = state.posts[comment.post]
-        state.posts[comment.post] = {
-            id: post.id,
-            author: post.author,
-            content: post.content,
-            likeCount: post.likeCount,
-            commentCount: post.commentCount + 1
-        }
+
+        if (post)
+            state.posts[comment.post] = {
+                id: post.id,
+                author: post.author,
+                content: post.content,
+                likeCount: post.likeCount,
+                commentCount: post.commentCount + 1
+            }
     }
 }
 

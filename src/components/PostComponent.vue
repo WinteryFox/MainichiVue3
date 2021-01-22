@@ -120,12 +120,10 @@ export default defineComponent({
 
   async setup(props) {
     const store = useStore<UserState>()
-    const isLiked = computed<boolean>(() =>
-        store.state.likes.find(value => value == props.post.id) != null
-    )
+    const isLiked = computed<boolean>(() => store.state.likes.find(value => value == props.post.id) != null)
 
     await store.dispatch(UserMutations.FETCH_USER_BATCH, [props.post.author])
-    const user: PartialUser = store.state.users[props.post.author.toString()]
+    const user: PartialUser = store.state.users[props.post.author]
 
     const time = Number(1609459200000n + (BigInt(props.post.id) >> 22n))
     const date = ref(moment(time).fromNow(true))

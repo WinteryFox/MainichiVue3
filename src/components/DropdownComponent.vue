@@ -51,10 +51,7 @@ export default defineComponent({
 </script>
 
 <style lang="sass">
-.dropdown-menu
-  position: relative
-  display: inline
-  overflow-x: hidden
-  overflow-y: scroll
+.dropdown-content
+  overflow-y: auto
   max-height: 200px
 </style>

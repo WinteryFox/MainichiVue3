@@ -1,5 +1,5 @@
 <template>
-  <div class="dropdown is-right"
+  <div class="dropdown is-right is-up"
        :class="{ 'is-active': isActive }">
     <div class="dropdown-trigger"
          ref="dropdownRef">
@@ -49,3 +49,12 @@ export default defineComponent({
   }
 })
 </script>
+
+<style lang="sass">
+.dropdown-menu
+  position: relative
+  display: inline
+  overflow-x: hidden
+  overflow-y: scroll
+  max-height: 200px
+</style>

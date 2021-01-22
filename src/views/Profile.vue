@@ -66,13 +66,21 @@
             <a class="tag is-delete is-danger is-rounded" @click="removeProficient(tag)"/>
           </div>
         </div>
-        <div class="control">
-          <div class="tags">
-            <a class="tag is-medium is-light is-success is-rounded">
+        <DropdownComponent>
+          <template class="tags" #activator="{ on }">
+            <a class="tag is-medium is-light is-success is-rounded" v-on="on">
               +
             </a>
-          </div>
-        </div>
+          </template>
+          <template #default>
+            <a v-for="language in languages"
+               :key="language.code"
+               class="dropdown-item"
+               @click="addProficient(language)">
+              {{ language.language }}
+            </a>
+          </template>
+        </DropdownComponent>
       </div>
       <label for="learning">Learning language(s)</label>
       <div class="field is-grouped is-grouped-multiline" id="learning">
@@ -82,13 +90,21 @@
             <a class="tag is-delete is-danger is-rounded" @click="removeLearning(tag)"/>
           </div>
         </div>
-        <div class="control">
-          <div class="tags">
-              <span class="tag is-medium is-light is-success is-rounded">
-                +
-              </span>
-          </div>
-        </div>
+        <DropdownComponent>
+          <template class="tags" #activator="{ on }">
+            <a class="tag is-medium is-light is-success is-rounded" v-on="on">
+              +
+            </a>
+          </template>
+          <template #default>
+            <a v-for="language in languages"
+               :key="language.code"
+               class="dropdown-item"
+               @click="addLearning(language)">
+              {{ language.language }}
+            </a>
+          </template>
+        </DropdownComponent>
       </div>
       <div class="regbutton">
         <button class="btnregister" type="button" style="font-size: 16px" @click="updateLanguages">Save</button>
@@ -105,11 +121,13 @@ import {UserState} from "@/store";
 import {UserMutations} from "@/store/actions";
 import Language, {Learning} from "@/interface/Language"
 import AvatarComponent from "@/components/AvatarComponent.vue";
+import DropdownComponent from "@/components/DropdownComponent.vue";
 
 export default defineComponent({
   name: "Profile",
 
   components: {
+    DropdownComponent,
     AvatarComponent
   },
 
@@ -141,8 +159,9 @@ export default defineComponent({
               language
             }
           })
+          .sort((v1, v2) => v1.language.localeCompare(v2.language))
       learning.value = response.data.learning
-          .map((value: never) => {
+          .map((value: Learning) => {
             // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
             const lang = languages.find(v => v.code == value["language"])!!
             const code = lang.code
@@ -154,17 +173,10 @@ export default defineComponent({
               proficiency
             }
           })
+          .sort((v1: Learning, v2: Learning) => v1.language.localeCompare(v2.language))
     } catch (e) {
       console.error(e)
       alert("Something went wrong!")
-    }
-
-    function removeProficient(tag: Language) {
-      proficient.value = proficient.value.filter(value => value.code != tag.code)
-    }
-
-    function removeLearning(tag: Learning) {
-      learning.value = learning.value.filter(value => value.code != tag.code)
     }
 
     async function updateAvatar(event: Event) {
@@ -190,8 +202,35 @@ export default defineComponent({
       }
     }
 
+    function addProficient(language: Language) {
+      proficient.value.push(language)
+      proficient.value.sort((v1, v2) => v1.language.localeCompare(v2.language))
+    }
+
+    function addLearning(language: Learning) {
+      learning.value.push(language)
+      learning.value.sort((v1, v2) => v1.language.localeCompare(v2.language))
+    }
+
+    function removeProficient(tag: Language) {
+      proficient.value = proficient.value.filter(value => value.code != tag.code)
+      proficient.value.sort((v1, v2) => v1.language.localeCompare(v2.language))
+    }
+
+    function removeLearning(tag: Learning) {
+      learning.value = learning.value.filter(value => value.code != tag.code)
+      learning.value.sort((v1, v2) => v1.language.localeCompare(v2.language))
+    }
+
     async function updateLanguages() {
-      // TODO
+      await api.post(
+          "/users/@me/languages",
+          {
+            proficient: proficient.value.map(v => v.code),
+            learning: learning.value.map(v => v.code)
+          }
+      )
+      alert("Successfully saved language preferences.")
     }
 
     return {
@@ -199,8 +238,11 @@ export default defineComponent({
       form,
       proficient,
       learning,
+      addProficient,
+      addLearning,
       removeProficient,
       removeLearning,
+      updateLanguages,
       updateUser,
       updateAvatar,
       avatar: store.state.self?.avatar,
@@ -212,6 +254,10 @@ export default defineComponent({
 
 <style scoped lang="sass">
 @import "~@/assets/main.sass"
+
+a.tag:hover
+  text-decoration: none
+  user-select: none
 
 .btndiscard
   display: flex

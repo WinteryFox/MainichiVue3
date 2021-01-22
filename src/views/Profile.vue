@@ -28,7 +28,7 @@
       </div>
       <h3>Your introduction:</h3>
       <div class="introtext">
-        <textarea id="introduce" name="introduce" rows="20" cols="41" v-model="form.summary"/>
+        <textarea id="introduce" name="introduce" rows="13" cols="41" v-model="form.summary"/>
       </div>
     </div>
     <div class="column">

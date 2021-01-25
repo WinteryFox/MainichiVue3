@@ -9,9 +9,8 @@
       <h3>Upload or change your profile picture</h3>
       <div class="photo">
         <section>
-          <div
-              id="user-avatar"
-              aria-label="user avatar">
+          <div id="user-avatar"
+               aria-label="user avatar">
             <AvatarComponent :avatar="avatar"
                              size="194"
                              style="margin-left: 0"/>
@@ -122,6 +121,7 @@ import {UserMutations} from "@/store/actions";
 import Language, {Learning} from "@/interface/Language"
 import AvatarComponent from "@/components/AvatarComponent.vue";
 import DropdownComponent from "@/components/DropdownComponent.vue";
+import Error from "@/interface/Error";
 
 export default defineComponent({
   name: "Profile",
@@ -180,17 +180,32 @@ export default defineComponent({
     }
 
     async function updateAvatar(event: Event) {
-      try {
-        const target = event.target as HTMLInputElement
-        const files = target.files as FileList
-        const form = new FormData()
-        form.append('avatar', files[0])
-
-        await api.patch("/users/@me", form)
-        alert("Successfully updated avatar!")
-      } catch (e) {
-        alert(e.response.data.message)
+      if (!event.target ||
+          !(event.target instanceof HTMLInputElement) ||
+          !event.target.files ||
+          event.target.files.length != 1) {
+        alert("Oh no, something went wrong! Try again later!")
+        return
       }
+
+      const reader = new FileReader()
+      reader.onloadend = async () => {
+        try {
+          await api.patch("/users/@me", {avatar: reader.result})
+          alert("Successfully updated avatar!")
+        } catch (e) {
+          const error: Error = e.response.data
+          if (error.status == 400) {
+            if (error.code == 4005) {
+              alert("Avatar must be 256x256 pixels, and be less than 256kB in size.")
+            }
+          } else if (error.status == 500) {
+            alert("Something went wrong while processing your avatar, try again later!")
+          }
+        }
+      }
+
+      reader.readAsDataURL(event.target.files[0])
     }
 
     async function updateUser() {

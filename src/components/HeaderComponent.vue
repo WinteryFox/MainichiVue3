@@ -25,11 +25,12 @@
         <span aria-hidden="true"></span>
       </a>
     </div>
-
     <div class="navbar-menu"
          :class="{ 'is-active': isEnabled }"
          ref="navMenuRef">
       <div class="navbar-end">
+        <span class="icon mr-1 is-large"><i class="material-icons">message</i></span>
+        <span class="icon mr-1 is-large"><i class="material-icons">assignment</i></span>
         <a
             @click="login"
             class="navbar-item is-flex"

@@ -5,7 +5,7 @@
     </template>
     <template #fallback>
       <LoaderComponent
-          title="PenWeb"
+          title="Mainichi"
           subtitle="Now loading"/>
     </template>
   </Suspense>
@@ -16,7 +16,7 @@
     </template>
     <template #fallback>
       <LoaderComponent
-          title="PenWeb"
+          title="Mainichi"
           subtitle="Fetching..."/>
     </template>
   </Suspense>

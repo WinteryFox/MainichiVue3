@@ -49,6 +49,9 @@
     <a class="button is-info is-large is-rounded" @click="login">
       Login
     </a>
+    <router-link class="button is-info is-large is-rounded" to="/register">
+      Register
+    </router-link>
   </div>
 </template>
 
@@ -156,12 +159,15 @@ export default defineComponent({
     width: 13em
 
 .feed
+  display: flex
+  flex-direction: column
+  flex-grow: 1
   max-width: 568px
-  margin: 0 auto !important
+  margin: 0 auto
 
   .button
     font-size: 18px
-    background: transparent !important
+    background: transparent
     color: $black
     z-index: 1
     border: none

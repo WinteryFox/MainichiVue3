@@ -32,7 +32,7 @@ import {computed, defineComponent} from "vue";
 import {useStore} from "vuex";
 import {useRoute, useRouter} from "vue-router";
 import {UserMutations} from "@/store/actions";
-import {apiUri} from "@/service/api";
+import {api, apiUri} from "@/service/api";
 import PartialUser from "@/interface/PartialUser";
 import ModalComponent from "@/components/ModalComponent.vue";
 import AvatarComponent from "@/components/AvatarComponent.vue";
@@ -50,6 +50,7 @@ export default defineComponent({
     await store.dispatch(UserMutations.FETCH_USER_BATCH, [route.params.id])
 
     const user: PartialUser = store.state.users[route.params.id.toString()]
+    const languages = (await api.get(`/users/${user.id}/languages`)).data
     const avatar = `${apiUri}/avatars/${user.avatar}.png`
     const age = computed<number | null>(() => {
       if (user.birthday != null) {
@@ -74,6 +75,7 @@ export default defineComponent({
       user,
       avatar,
       age,
+      languages,
       close
     }
   }

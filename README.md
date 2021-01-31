@@ -1,4 +1,4 @@
-# penwebvue
+# Mainichi Vue
 
 ## Project setup
 ```

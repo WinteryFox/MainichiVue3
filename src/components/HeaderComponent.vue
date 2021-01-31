@@ -9,7 +9,7 @@
              alt="branding"
              width="112"
              height="28"/>
-        <p class="heading is-size-4 mb-0">PenWeb</p>
+        <p class="heading is-size-4 mb-0">Mainichi</p>
       </router-link>
 
       <a @click.prevent="hamburger"
@@ -29,12 +29,9 @@
          :class="{ 'is-active': isEnabled }"
          ref="navMenuRef">
       <div class="navbar-end">
-        <span class="icon mr-1 is-large"><i class="material-icons">message</i></span>
-        <span class="icon mr-1 is-large"><i class="material-icons">assignment</i></span>
-        <a
-            @click="login"
-            class="navbar-item is-flex"
-            v-if="self === null">
+        <a @click="login"
+           class="navbar-item is-flex"
+           v-if="self === null">
           <span class="icon mr-2 has-text-success"><i class="material-icons">login</i></span>
           Login
         </a>

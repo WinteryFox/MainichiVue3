@@ -43,4 +43,7 @@ export default defineComponent({
 .image, .icon
   border-radius: 50%
   background-color: $white
+  user-select: none
+  text-decoration: none
+  color: $grey-dark
 </style>

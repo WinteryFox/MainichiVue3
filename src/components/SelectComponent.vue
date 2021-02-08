@@ -38,9 +38,9 @@ export default defineComponent({
   name: "SelectComponent",
 
   props: {
-    modelValue: String,
+    modelValue: [String, Number],
     values: {
-      type: Array as PropType<Array<string>>,
+      type: Array as PropType<Array<string | number>>,
       required: true
     },
     label: {
@@ -54,10 +54,10 @@ export default defineComponent({
   ],
 
   setup(props, {emit}) {
-    const text = ref<string>("")
+    const text = ref<string | number>(props.modelValue || "")
     const textRef = ref<HTMLInputElement | null>(null)
     const expanded = ref<boolean>(false)
-    const filteredValues = ref<Array<string>>(props.values)
+    const filteredValues = ref<Array<string | number>>(props.values)
     const selRef = ref<HTMLDivElement | null>(null)
 
     function clickHandler(event: MouseEvent) {
@@ -89,7 +89,7 @@ export default defineComponent({
     function input() {
       expanded.value = true
       filteredValues.value = props.values.filter(value =>
-          value.startsWith(text.value))
+          value.toString().startsWith(text.value.toString()))
 
       if (filteredValues.value.length == 1) {
         expanded.value = false
@@ -126,6 +126,9 @@ export default defineComponent({
   border-radius: 3px
   box-shadow: inset 0 0.0625em 0.125em $grey-lightest
   background-color: white
+
+  &.is-danger
+    border: 1px solid $danger
 
   &:hover
     cursor: text

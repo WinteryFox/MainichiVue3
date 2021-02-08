@@ -46,9 +46,9 @@
     <label class="is-size-5 mt-5">
       Get started!
     </label>
-    <a class="button is-info is-large is-rounded" @click="login">
+    <router-link class="button is-info is-large is-rounded mb-3" to="/login">
       Login
-    </a>
+    </router-link>
     <router-link class="button is-info is-large is-rounded" to="/register">
       Register
     </router-link>
@@ -58,9 +58,8 @@
 <script lang="ts">
 import {computed, defineComponent, onMounted, ref} from "vue"
 import PostComponent from "@/components/PostComponent.vue"
-import {api, apiUri} from "@/service/api"
+import {api} from "@/service/api"
 import {useStore} from "vuex"
-import {UserMutations} from "@/store/actions"
 import User from "@/interface/User"
 import {UserState} from "@/store"
 import Post from "@/interface/Post";
@@ -86,9 +85,6 @@ export default defineComponent({
     const progress = ref<HTMLDivElement | null>(null)
 
     onMounted(() => textarea.value?.focus())
-
-    if (posts.value.length == 0)
-      await store.dispatch(UserMutations.FETCH_POSTS)
 
     function input() {
       if (button.value != null && progress.value != null) {
@@ -118,28 +114,15 @@ export default defineComponent({
       input()
     }
 
-    async function likePost() {
-      await api.post("/posts/")
-    }
-
-    function login() {
-      const params = new URLSearchParams()
-      params.append("redirect_uri", window.location.href)
-
-      window.location.href = `${apiUri}/oauth2/authorization/google?` + params.toString()
-    }
-
     return {
       posts,
       self,
       content,
-      likePost,
       createPost,
       textarea,
       input,
       button,
-      progress,
-      login
+      progress
     }
   }
 })

@@ -36,6 +36,7 @@ const actions: ActionTree<UserState, UserState> & Actions = {
             const likes = await api.get(`/users/${self.data.id}/likes`)
             context.commit(UserMutations.FETCH_SELF, self.data)
             context.commit(UserMutations.FETCH_LIKES, likes.data)
+            await context.dispatch(UserMutations.FETCH_POSTS)
         } catch (_) {
         }
 

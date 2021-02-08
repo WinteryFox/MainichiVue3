@@ -4,6 +4,7 @@ import User from "@/views/User.vue"
 import Post from "@/views/Post.vue"
 import Profile from "@/views/Profile.vue"
 import Register from "@/views/Register.vue"
+import Login from "@/views/Login.vue"
 
 export default createRouter({
   history: createWebHistory(),
@@ -29,6 +30,10 @@ export default createRouter({
     {
       path: "/register",
       component: Register
+    },
+    {
+      path: "/login",
+      component: Login
     }
   ]
 })

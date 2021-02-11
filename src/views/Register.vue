@@ -1,5 +1,5 @@
 <template>
-  <ModalComponent active>
+  <ModalComponent @update:model-value="close" active>
     <div class="box">
       <StepsComponent step-count="4"
                       v-model="step">
@@ -141,7 +141,12 @@
             Beep boop?
           </div>
 
-          <RecaptchaComponent class="is-flex is-justify-content-center" @update="register"/>
+          <RecaptchaComponent class="is-flex is-justify-content-center"
+                              @update="register"
+                              v-if="!isLoading"/>
+          <LoaderComponent title="Creating account"
+                           subtitle="Just a moment"
+                           v-else/>
         </div>
       </StepsComponent>
     </div>
@@ -156,6 +161,7 @@ import ModalComponent from "@/components/ModalComponent.vue";
 import Error from "@/interface/Error";
 import SelectComponent from "@/components/SelectComponent.vue";
 import StepsComponent from "@/components/StepsComponent.vue";
+import LoaderComponent from "@/components/LoaderComponent.vue";
 import moment from "moment";
 import {useRouter} from "vue-router";
 import {useStore} from "vuex";
@@ -168,7 +174,8 @@ export default defineComponent({
     RecaptchaComponent,
     StepsComponent,
     SelectComponent,
-    ModalComponent
+    ModalComponent,
+    LoaderComponent
   },
 
   async setup() {
@@ -192,6 +199,7 @@ export default defineComponent({
       day: 0
     })
     const passwordRepeat = ref<string>("")
+    const isLoading = ref<boolean>(false)
 
     function getMonthList(
         locales?: string | string[],
@@ -210,6 +218,7 @@ export default defineComponent({
     }
 
     async function register(token: string) {
+      isLoading.value = true
       try {
         await api.post(
             "/register",
@@ -225,6 +234,7 @@ export default defineComponent({
         )
       } catch (e) {
         const error: Error = e.response.data
+        isLoading.value = false
 
         if (error.status == 400) {
           if (error.code == 4007) {
@@ -236,7 +246,10 @@ export default defineComponent({
 
             return
           }
+        } else if (error.status == 402) {
+          alert("You cannot register for an account when you're logged in.")
         } else {
+          step.value = 1
           alert("Something went wrong, try again later!")
         }
       }
@@ -321,12 +334,18 @@ export default defineComponent({
       }
     }
 
+    function close() {
+      router.push("/")
+    }
+
     return {
       register,
       form,
       birthday,
       passwordRepeat,
       step,
+      isLoading,
+      close,
       validate1,
       validate2,
       validate3,
@@ -337,6 +356,3 @@ export default defineComponent({
   }
 })
 </script>
-
-<style scoped lang="sass">
-</style>

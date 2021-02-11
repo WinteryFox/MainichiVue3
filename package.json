@@ -9,10 +9,12 @@
   },
   "dependencies": {
     "@creativebulma/bulma-tooltip": "^1.2.0",
+    "@types/eventsource": "^1.1.5",
     "axios": "^0.21.0",
     "bulma": "^0.9.1",
     "bulma-steps-component": "^0.5.3",
     "core-js": "^3.6.5",
+    "eventsource": "^1.0.7",
     "moment": "^2.29.1",
     "node-sass": "^5.0.0",
     "sass-loader": "^10.1.0",

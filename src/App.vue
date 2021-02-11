@@ -5,7 +5,8 @@
       <router-view/>
     </template>
     <template #fallback>
-      Loading...
+      <LoaderComponent title="Mainichi"
+                       subtitle="Loading"/>
     </template>
   </Suspense>
 </template>
@@ -13,9 +14,11 @@
 <script lang="ts">
 import {defineComponent} from "vue";
 import HeaderComponent from "@/components/HeaderComponent.vue";
+import LoaderComponent from "@/components/LoaderComponent.vue";
 
 export default defineComponent({
   components: {
+    LoaderComponent,
     HeaderComponent
   }
 })

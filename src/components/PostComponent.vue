@@ -60,7 +60,7 @@
                          @click="likePost">
           <template #default>
             <i class="material-icons liked" v-if="isLiked">favorite</i>
-            <i class="material-icons-outlined" v-else>favorite</i>
+            <i class="material-icons" v-else>favorite_outline</i>
           </template>
           <template #meta>
             <span :class="{ 'liked': isLiked }">{{ post.likeCount }}</span>

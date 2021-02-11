@@ -100,10 +100,9 @@ export default defineComponent({
 
     async function createPost() {
       try {
-        const params = new URLSearchParams()
-        params.append("content", content.value)
-
-        await api.post("/posts", params)
+        await api.post("/posts", {
+          content: content.value
+        })
         content.value = ""
       } catch (e) {
         console.error(e)

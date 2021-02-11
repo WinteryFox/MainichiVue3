@@ -1,3 +1,4 @@
+import EventSource from "eventsource";
 import {apiUri} from "@/service/api";
 import {UserMutations} from "@/store/actions";
 import store from "@/store"
@@ -12,7 +13,9 @@ const events: Record<string, UserMutations> = {
 const publisher = new EventSource(
     `${apiUri}/events`,
     {
-        withCredentials: true
+        headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`
+        }
     }
 )
 

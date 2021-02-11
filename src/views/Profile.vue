@@ -324,13 +324,6 @@ label span
     box-shadow: 0 5px 5px -3px rgba(0, 0, 0, 0.2), 0px 8px 10px 1px rgba(0, 0, 0, 0.14), 0px 3px 14px 2px rgba(0, 0, 0, 0.12)
     background-color: $info-dark
 
-.grid
-  background-image: url("~@/assets/background.png")
-  background-size: cover
-  height: 900px
-  width: auto
-  display: flex
-
 h1
   text-align: center
   font-family: "Arial", sans-serif

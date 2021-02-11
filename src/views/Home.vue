@@ -6,7 +6,7 @@
     <template #fallback>
       <LoaderComponent
           title="Mainichi"
-          subtitle="Now loading"/>
+          subtitle="Loading"/>
     </template>
   </Suspense>
 
@@ -17,7 +17,7 @@
     <template #fallback>
       <LoaderComponent
           title="Mainichi"
-          subtitle="Fetching..."/>
+          subtitle="Loading"/>
     </template>
   </Suspense>
 </template>
@@ -26,6 +26,9 @@
 import {defineComponent} from 'vue';
 import Feed from '@/views/Feed.vue';
 import LoaderComponent from "@/components/LoaderComponent.vue";
+import {useStore} from "vuex";
+import {UserState} from "@/store";
+import {UserMutations} from "@/store/actions";
 
 export default defineComponent({
   name: 'Home',
@@ -33,6 +36,12 @@ export default defineComponent({
   components: {
     LoaderComponent,
     Feed
+  },
+
+  async setup() {
+    const store = useStore<UserState>()
+
+    await store.dispatch(UserMutations.FETCH_SELF)
   }
 });
 </script>

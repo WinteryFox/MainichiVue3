@@ -9,9 +9,9 @@
 
           <div class="is-flex">
             <span class="icon">
-              <img src="/female.svg" alt="female" v-if="user.gender === 'F'"/>
-              <img src="/male.svg" alt="male" v-else-if="user.gender === 'M'"/>
-              <img src="/other.svg" alt="other" v-else/>
+              <img src="@/assets/female.svg" alt="female" v-if="user.gender === 'F'"/>
+              <img src="@/assets/male.svg" alt="male" v-else-if="user.gender === 'M'"/>
+              <img src="@/assets/other.svg" alt="other" v-else/>
             </span>
             <p v-if="age != null">{{ age }}</p>
           </div>

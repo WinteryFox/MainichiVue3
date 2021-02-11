@@ -5,10 +5,8 @@
     <div class="navbar-brand">
       <router-link class="navbar-item py-0" to="/">
         <img class="mr-3"
-             src="/logo.png"
-             alt="branding"
-             width="112"
-             height="28"/>
+             src="/logo.svg"
+             alt="branding"/>
         <p class="heading is-size-4 mb-0">Mainichi</p>
       </router-link>
 
@@ -19,7 +17,8 @@
          class="navbar-burger"
          aria-label="menu"
          aria-expanded="false"
-         style="user-select: none">
+         style="user-select: none"
+         v-if="self !== null">
         <span aria-hidden="true"></span>
         <span aria-hidden="true"></span>
         <span aria-hidden="true"></span>
@@ -29,13 +28,8 @@
          :class="{ 'is-active': isEnabled }"
          ref="navMenuRef">
       <div class="navbar-end">
-        <a @click="login"
-           class="navbar-item is-flex"
-           v-if="self === null">
-          <span class="icon mr-2 has-text-success"><i class="material-icons">login</i></span>
-          Login
-        </a>
-        <div class="navbar-item has-dropdown" v-else>
+        <div class="navbar-item has-dropdown"
+             v-if="self !== null">
           <router-link
               to="/profile"
               class="navbar-item is-flex">
@@ -53,10 +47,10 @@
 </template>
 
 <script lang="ts">
-import {computed, defineComponent, onMounted, ref} from "vue";
+import {computed, defineComponent, ref} from "vue";
 import {useStore} from "vuex";
 import {UserMutations} from "@/store/actions";
-import {api, apiUri} from "@/service/api";
+import {apiUri} from "@/service/api";
 import User from "@/interface/User";
 import {UserState} from "@/store";
 import AvatarComponent from "@/components/AvatarComponent.vue";
@@ -74,7 +68,6 @@ export default defineComponent({
         self.value != null ?
             `${apiUri}/avatars/${self.value.avatar}.png` :
             "https://upload.wikimedia.org/wikipedia/commons/2/24/Missing_avatar.svg")
-    onMounted(async () => await store.dispatch(UserMutations.FETCH_SELF))
 
     const hamburgerRef = ref<HTMLAnchorElement | null>(null)
     const navMenuRef = ref<HTMLDivElement | null>(null)
@@ -99,15 +92,8 @@ export default defineComponent({
         document.addEventListener("click", hideListener)
     }
 
-    function login() {
-      const params = new URLSearchParams()
-      params.append("redirect_uri", window.location.href)
-
-      window.location.href = `${apiUri}/oauth2/authorization/google?` + params.toString()
-    }
-
     async function logout() {
-      await api.post("/logout")
+      window.localStorage.removeItem("token")
       store.commit(UserMutations.FETCH_SELF, null)
     }
 
@@ -119,7 +105,6 @@ export default defineComponent({
       hideListener,
       self,
       avatar,
-      login,
       logout
     }
   }

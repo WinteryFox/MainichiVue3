@@ -1,9 +1,11 @@
 <template>
   <div class="box feed" v-if="self != null">
     <div class="is-flex">
-      <router-link :to="`/users/${self.id}`">
-        <AvatarComponent tabindex="0" class="mr-3" size="59" :avatar="self?.avatar"/>
-      </router-link>
+      <div>
+        <router-link :to="`/users/${self.id}`">
+          <AvatarComponent tabindex="0" class="mr-3" size="59" :avatar="self?.avatar"/>
+        </router-link>
+      </div>
       <div class="field">
         <div class="control">
           <label>
@@ -30,11 +32,13 @@
         </div>
       </div>
     </div>
+
     <span class="dropdown-divider m-0"/>
     <div v-for="post in posts" :key="post.id">
-      <PostComponent
-          :key="post.id"
-          :post="post"/>
+      <PostComponent :key="post.id"
+                     :post="post"/>
+      <PostControlsComponent class="is-justify-content-space-evenly"
+                             :post="post"/>
       <span class="dropdown-divider m-0"/>
     </div>
   </div>
@@ -64,9 +68,11 @@ import User from "@/interface/User"
 import {UserState} from "@/store"
 import Post from "@/interface/Post";
 import AvatarComponent from "@/components/AvatarComponent.vue";
+import PostControlsComponent from "@/components/PostControlsComponent.vue";
 
 export default defineComponent({
   components: {
+    PostControlsComponent,
     AvatarComponent,
     PostComponent
   },

@@ -2,6 +2,8 @@
   <ModalComponent active @update:model-value="close">
     <div class="box">
       <PostComponent :post="post"/>
+      <PostControlsComponent class="is-justify-content-space-evenly"
+                             :post="post"/>
       <div v-for="comment in comments" :key="comment.id">
         <div class="dropdown-divider"/>
         <CommentComponent :comment="comment"/>
@@ -21,11 +23,13 @@ import {UserState} from "@/store";
 import {UserMutations} from "@/store/actions";
 import {api} from "@/service/api";
 import CommentComponent from "@/components/CommentComponent.vue";
+import PostControlsComponent from "@/components/PostControlsComponent.vue";
 
 export default defineComponent({
   name: "Post",
 
   components: {
+    PostControlsComponent,
     PostComponent,
     ModalComponent,
     CommentComponent

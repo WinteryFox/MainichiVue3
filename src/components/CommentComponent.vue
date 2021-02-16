@@ -4,7 +4,7 @@
       <AvatarComponent :avatar="commenter.avatar" size="59"/>
     </router-link>
 
-    <div class="is-flex is-flex-direction-column details">
+    <div class="is-flex is-flex-direction-column">
       <router-link :to="`/users/${commenter.id}`" class="is-flex user-row">
         <span class="username">{{ commenter.username }}</span>
         <span class="ml-2 time has-text-grey">· {{ date }}</span>
@@ -71,4 +71,9 @@ export default defineComponent({
 
   .time
     flex-shrink: 0
+
+.content
+  overflow-wrap: break-word
+  word-break: break-word
+  white-space: pre-line
 </style>

@@ -231,7 +231,13 @@ export default defineComponent({
               password: form.password,
               summary: form.summary,
               username: form.username,
-              birthday: new Date(birthday.year, moment().month(birthday.month).month(), birthday.day).toISOString()
+              birthday: new Date(
+                  Date.UTC(
+                      birthday.year,
+                      moment().month(birthday.month).month(),
+                      birthday.day
+                  )
+              ).toISOString()
             }
         )
       } catch (e) {

@@ -7,7 +7,7 @@
         <img class="mr-3"
              src="/logo.svg"
              alt="branding"/>
-        <p class="heading is-size-4 mb-0">Mainichi</p>
+        <p class="navbar-item heading is-size-4 mb-0">{{ $t("nav.branding") }}</p>
       </router-link>
 
       <a @click.prevent="hamburger"
@@ -38,7 +38,7 @@
           </router-link>
           <a class="navbar-item is-flex" @click="logout">
             <span class="icon mr-2 has-text-danger"><i class="material-icons">logout</i></span>
-            Logout
+            {{ $t("nav.logout") }}
           </a>
         </div>
       </div>
@@ -50,12 +50,12 @@
 import {computed, defineComponent, ref} from "vue";
 import {useStore} from "vuex";
 import {UserMutations} from "@/store/actions";
-import {apiUri} from "@/service/api";
 import User from "@/interface/User";
 import {UserState} from "@/store";
 import AvatarComponent from "@/components/AvatarComponent.vue";
 
 export default defineComponent({
+  name: "HeaderComponent",
 
   components: {
     AvatarComponent
@@ -64,10 +64,6 @@ export default defineComponent({
   setup() {
     const store = useStore<UserState>()
     const self = computed<User | null>(() => store.state.self)
-    const avatar = computed<string>(() =>
-        self.value != null ?
-            `${apiUri}/avatars/${self.value.avatar}.png` :
-            "https://upload.wikimedia.org/wikipedia/commons/2/24/Missing_avatar.svg")
 
     const hamburgerRef = ref<HTMLAnchorElement | null>(null)
     const navMenuRef = ref<HTMLDivElement | null>(null)
@@ -92,7 +88,7 @@ export default defineComponent({
         document.addEventListener("click", hideListener)
     }
 
-    async function logout() {
+    function logout() {
       window.localStorage.removeItem("token")
       store.commit(UserMutations.FETCH_SELF, null)
     }
@@ -104,7 +100,6 @@ export default defineComponent({
       hamburger,
       hideListener,
       self,
-      avatar,
       logout
     }
   }
@@ -112,7 +107,11 @@ export default defineComponent({
 </script>
 
 <style lang="sass" scoped>
-@import '~bulma/bulma.sass'
+@import '~@/assets/main.sass'
+
+.heading
+  color: $primary
+  font-weight: 800
 
 .avatar
   margin-left: -0.25rem

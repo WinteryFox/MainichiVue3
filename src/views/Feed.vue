@@ -14,7 +14,7 @@
                       rows="2"
                       cols="100"
                       class="textarea"
-                      placeholder="What's happening?"
+                      :placeholder="$t('feed.write')"
                       ref="textarea"
                       v-model="content"
                       @input="input"/>
@@ -27,7 +27,7 @@
                   ref="button"
                   disabled>
             <span class="progress-bar" ref="progress"/>
-            Create post
+            {{ $t("feed.create") }}
           </button>
         </div>
       </div>
@@ -45,16 +45,16 @@
 
   <div class="login" v-else>
     <span class="is-size-3">
-      It's time to one-up your language knowledge!
+      {{ $t("register.introduction") }}
     </span>
     <label class="is-size-5 mt-5">
-      Get started!
+      {{ $t("register.start") }}
     </label>
     <router-link class="button is-info is-large is-rounded mb-3" to="/login">
-      Login
+      {{ $t("register.login") }}
     </router-link>
     <router-link class="button is-info is-large is-rounded" to="/register">
-      Register
+      {{ $t("register.register") }}
     </router-link>
   </div>
 </template>
@@ -69,6 +69,7 @@ import {UserState} from "@/store"
 import Post from "@/interface/Post";
 import AvatarComponent from "@/components/AvatarComponent.vue";
 import PostControlsComponent from "@/components/PostControlsComponent.vue";
+import {UserMutations} from "@/store/actions";
 
 export default defineComponent({
   components: {
@@ -79,11 +80,6 @@ export default defineComponent({
 
   async setup() {
     const store = useStore<UserState>()
-    const posts = computed<Array<Post>>(() => {
-      const posts = Object.values(store.state.posts)
-
-      return posts.sort((v1, v2) => v1.id > v2.id ? -1 : 1)
-    })
     const self = computed<User | null>(() => store.state.self)
     const content = ref<string>("")
     const textarea = ref<HTMLInputElement | null>(null)
@@ -118,6 +114,14 @@ export default defineComponent({
       content.value = ""
       input()
     }
+
+    await store.dispatch(UserMutations.FETCH_POSTS)
+
+    const posts = computed<Array<Post>>(() => {
+      const posts = Object.values(store.state.posts)
+
+      return posts.sort((v1, v2) => v1.id > v2.id ? -1 : 1)
+    })
 
     return {
       posts,

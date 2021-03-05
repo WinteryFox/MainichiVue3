@@ -1,0 +1,52 @@
+{
+  "general": {
+    "waiting": "しばらくお待ちください"
+  },
+  "nav": {
+    "branding": "マイニチ",
+    "logout": "ログアウト"
+  },
+  "feed": {
+    "write": "何していますか？",
+    "create": "投稿",
+    "copy-url": "投稿のURLをコピー",
+    "replying": "{'@'}{username}に返信します",
+    "reply": "返信"
+  },
+  "register": {
+    "introduction": "さぁ、言語を勉強しましょう！",
+    "start": "始めましょう！",
+    "login": "ログイン",
+    "register": "登録",
+    "next": "次",
+    "previous": "先",
+    "creating": "アカウントを作っています",
+    "step-1": {
+      "title": "アカウント情報"
+    },
+    "step-2": {
+      "title": "あなたは?"
+    },
+    "step-3": {
+      "title": "自己紹介",
+      "description": "まずは簡単な自己紹介をしましょう！"
+    },
+    "step-4": {
+      "title": "ビープブープ？"
+    },
+    "forms": {
+      "email": "メール",
+      "password": "パスワード",
+      "password-repeat": "パスワードもう一回",
+      "username": "表示名",
+      "gender": "性別",
+      "female": "女性",
+      "male": "男性",
+      "other": "他",
+      "birthday": "誕生日",
+      "year": "年",
+      "month": "月",
+      "day": "日"
+    }
+  }
+}

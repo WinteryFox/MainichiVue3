@@ -5,11 +5,11 @@
                       v-model="step">
         <div v-if="step === 1">
           <div class="title mb-5 has-text-centered">
-            Essential information
+            {{ $t("register.step-1.title") }}
           </div>
 
           <div class="field">
-            <label class="label" for="email">Email*</label>
+            <label class="label" for="email">{{ $t("register.forms.email") }}*</label>
             <div class="control">
               <input class="input"
                      id="email"
@@ -21,7 +21,7 @@
           </div>
 
           <div class="field">
-            <label class="label" for="password">Password*</label>
+            <label class="label" for="password">{{ $t("register.forms.password") }}*</label>
             <div class="control">
               <input class="input"
                      id="password"
@@ -31,7 +31,7 @@
           </div>
 
           <div class="field">
-            <label class="label" for="repeat">Repeat password*</label>
+            <label class="label" for="repeat">{{ $t("register.forms.password-repeat") }}*</label>
             <input class="input"
                    id="repeat"
                    type="password"
@@ -40,112 +40,114 @@
 
           <button class="button is-fullwidth is-primary"
                   @click="validate1">
-            Next
+            {{ $t("register.next") }}
           </button>
         </div>
 
         <div v-else-if="step === 2">
           <div class="title mb-5 has-text-centered">
-            Who are you?
+            {{ $t("register.step-2.title") }}
           </div>
 
           <div class="field">
-            <label class="label" for="username">Display name*</label>
+            <label class="label" for="username">{{ $t("register.forms.username") }}*</label>
             <div class="control">
               <input class="input" id="username" type="text" v-model="form.username">
             </div>
           </div>
 
           <div class="field">
-            <label class="label">Gender*</label>
+            <label class="label">{{ $t("register.forms.gender") }}*</label>
             <div class="control">
               <label class="radio">
                 <input class="radio" type="radio" value="F" v-model="form.gender">
-                Female
+                {{ $t("register.forms.female") }}
               </label>
 
               <label class="radio">
                 <input class="radio" type="radio" value="M" v-model="form.gender">
-                Male
+                {{ $t("register.forms.male") }}
               </label>
 
               <label class="radio">
                 <input class="radio" type="radio" :value="null" v-model="form.gender">
-                Other / Prefer not to say
+                {{ $t("register.forms.other") }}
               </label>
             </div>
           </div>
 
           <fieldset class="field is-flex is-justify-content-space-between">
-            <legend class="label">Birthday*</legend>
+            <legend class="label">{{ $t("register.forms.birthday") }}*</legend>
 
             <SelectComponent :values="years"
-                             label="Year"
+                             :label="$t('register.forms.year')"
                              id="year"
-                             v-model="birthday.year"/>
+                             v-model="birthday.year"
+                             dropup/>
 
             <span aria-hidden="true" style="width: 20px"/>
 
             <SelectComponent :values="months"
-                             label="Month"
+                             :label="$t('register.forms.month')"
                              id="month"
-                             v-model="birthday.month"/>
+                             v-model="birthday.month"
+                             dropup/>
 
             <span aria-hidden="true" style="width: 20px"/>
 
             <SelectComponent :values="days"
-                             label="Day"
+                             :label="$t('register.forms.day')"
                              id="day"
-                             v-model="birthday.day"/>
+                             v-model="birthday.day"
+                             dropup/>
           </fieldset>
 
           <div class="buttons is-flex is-justify-content-space-between">
             <button class="button is-danger"
                     @click="step = 1">
-              Previous
+              {{ $t("register.previous") }}
             </button>
 
             <button class="button is-primary"
                     @click="validate2">
-              Next
+              {{ $t("register.next") }}
             </button>
           </div>
         </div>
 
         <div v-else-if="step === 3">
           <div class="title mb-5 has-text-centered">
-            Self-introduction
+            {{ $t("register.step-3.title") }}
           </div>
 
           <label for="summary" class="label">
-            Write a short self-introduction that other people will see
-            when they visit your profile.
+            {{ $t("register.step-3.description") }}
           </label>
           <textarea id="summary" class="input textarea" v-model="form.summary"/>
 
           <div class="buttons mt-4 is-flex is-justify-content-space-between">
             <button class="button is-danger"
                     @click="step = 2">
-              Previous
+              {{ $t("register.previous") }}
             </button>
 
             <button class="button is-primary"
                     @click="validate3">
-              Next
+              {{ $t("register.next") }}
             </button>
           </div>
         </div>
 
         <div v-else-if="step === 4">
           <div class="title mb-5 has-text-centered">
-            Beep boop?
+            {{ $t("register.step-4.title") }}
           </div>
 
           <RecaptchaComponent class="is-flex is-justify-content-center"
                               @update="register"
                               v-if="!isLoading"/>
-          <LoaderComponent title="Creating account"
-                           subtitle="Just a moment"
+          <LoaderComponent :title="$t('register.creating')"
+                           :subtitle="$t('waiting')"
                            v-else/>
         </div>
       </StepsComponent>

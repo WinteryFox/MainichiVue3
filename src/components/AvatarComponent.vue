@@ -1,19 +1,19 @@
 <template>
-  <figure v-if="avatar != null"
-          class="image"
+  <figure class="image is-flex is-flex-shrink-0"
           :style="{ 'width': `${size}px`, 'height': `${size}px` }">
-    <img class="is-rounded avatar"
+    <img v-if="avatar != null"
+         class="is-rounded avatar"
          :src="`${apiUri}/avatars/${avatar}.png`"
          alt="avatar"/>
+    <span v-else
+          class="icon"
+          :style="{ 'width': `${size}px`, 'height': `${size}px` }">
+      <i class="material-icons"
+         :style="{ 'font-size': `${size}px` }">
+        account_circle
+      </i>
+    </span>
   </figure>
-  <span v-else
-        class="icon"
-        :style="{ 'width': `${size}px`, 'height': `${size}px` }">
-    <i class="material-icons"
-    :style="{ 'font-size': `${size}px` }">
-      account_circle
-    </i>
-  </span>
 </template>
 
 <script lang="ts">
@@ -40,10 +40,14 @@ export default defineComponent({
 <style scoped lang="sass">
 @import "~@/assets/main.sass"
 
-.image, .icon
-  border-radius: 50%
-  background-color: $white
-  user-select: none
-  text-decoration: none
-  color: $grey-dark
+figure
+  margin: 0 -4px !important
+
+  .image, .icon
+    margin: 0 !important
+    border-radius: 50%
+    background-color: $white
+    user-select: none
+    text-decoration: none
+    color: $grey-dark
 </style>

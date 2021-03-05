@@ -4,12 +4,12 @@
     <div class="py-2">
       <div class="is-flex">
         <router-link :to="userUrl" class="avatar mr-3">
-          <AvatarComponent :avatar="user.avatar" size="59"/>
+          <AvatarComponent :avatar="author.avatar" size="59"/>
         </router-link>
 
         <div class="is-flex is-flex-direction-column details">
           <router-link :to="userUrl" class="is-flex user-row">
-            <span class="username">{{ user.username }}</span>
+            <span class="username">{{ author.username }}</span>
             <span class="ml-2 time has-text-grey">· {{ date }}</span>
           </router-link>
 
@@ -22,11 +22,10 @@
 
 <script lang="ts">
 import Post from "@/interface/Post"
-import {defineComponent, PropType, ref} from "vue";
+import {computed, defineComponent, PropType, ref} from "vue";
 import {apiUri} from "@/service/api";
 import {useStore} from "vuex";
 import PartialUser from "@/interface/PartialUser";
-import {UserMutations} from "@/store/actions";
 import {UserState} from "@/store";
 import AvatarComponent from "@/components/AvatarComponent.vue";
 import moment from "moment";
@@ -44,28 +43,24 @@ export default defineComponent({
     }
   },
 
-  async setup(props) {
+  setup(props) {
     const store = useStore<UserState>()
-
-    await store.dispatch(UserMutations.FETCH_USER_BATCH, [props.post.author])
-    const user: PartialUser = store.state.users[props.post.author]
+    const author = computed<PartialUser>(() => store.state.users[props.post.author])
 
     const time = Number(1609459200000n + (BigInt(props.post.id) >> 22n))
     const date = ref(moment(time).fromNow(true))
-
-    const userUrl = `/users/${user.id}`
-    const postUrl = `/posts/${props.post.id}`
-
     setInterval(() => date.value = moment(time).fromNow(true), 60000)
 
+    const userUrl = `/users/${author.value.id}`
+    const postUrl = `/posts/${props.post.id}`
+
     return {
-      props,
-      user,
       apiUri,
       date,
       postUrl,
       userUrl,
-      copyUrl
+      copyUrl,
+      author
     }
   }
 })

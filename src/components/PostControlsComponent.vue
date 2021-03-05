@@ -4,9 +4,12 @@
       <template v-slot:activator="{ on }">
         <ButtonComponent color="rgb(23, 191, 99)"
                          background="rgba(23, 191, 99, 0.1)"
-                         v-on="on">
+                         v-on="on"
+                         :disabled="self === null">
           <template #default>
-            <i class="material-icons">comment</i>
+            <i class="material-icons">
+              comment
+            </i>
           </template>
           <template #meta>
             <span>{{ post.commentCount }}</span>
@@ -14,20 +17,21 @@
         </ButtonComponent>
       </template>
 
-      <div class="box is-flex is-flex-direction-column">
-        <PostComponent :post="post"/>
+      <div class="box is-flex is-flex-direction-column" v-if="self !== null">
+        <PostComponent :post="post"
+                       :author="author"/>
 
         <span class="dropdown-divider"/>
 
         <div class="is-flex mt-3">
           <AvatarComponent class="mr-3"
                            size="59"
-                           :avatar="author.avatar"/>
+                           :avatar="self.avatar"/>
 
           <div class="control text">
             <textarea class="textarea"
                       aria-label="Reply"
-                      :placeholder="`Replying to @${author.username}`"
+                      :placeholder="$t('feed.replying', { username: author.username })"
                       v-model="commentContent"></textarea>
           </div>
         </div>
@@ -35,16 +39,21 @@
         <div class="control is-align-self-flex-end mt-3">
           <button class="button is-primary"
                   @click="postComment">
-            Reply
+            {{ $t("feed.reply") }}
           </button>
         </div>
       </div>
     </ModalComponent>
     <ButtonComponent color="rgb(224, 36, 94)"
                      background="rgba(224, 36, 94, 0.1)"
-                     @click="likePost">
+                     @click="likePost"
+                     :disabled="self === null">
       <template #default>
-        <i class="material-icons liked" v-if="isLiked">favorite</i>
+        <i class="material-icons liked"
+           v-if="isLiked"
+           :disabled="self === null">
+          favorite
+        </i>
         <i class="material-icons" v-else>favorite_outline</i>
       </template>
       <template #meta>
@@ -64,7 +73,7 @@
       <template #default>
         <a class="is-flex is-align-items-center dropdown-item" @click="copyUrl(`/posts/${post.id}`)">
           <span class="icon mr-2"><i class="material-icons">link</i></span>
-          Copy post link
+          {{ $t("feed.copy-url") }}
         </a>
       </template>
     </DropdownComponent>
@@ -84,6 +93,7 @@ import {copyUrl} from "@/interface/Functions";
 import PostComponent from "@/components/PostComponent.vue";
 import AvatarComponent from "@/components/AvatarComponent.vue";
 import PartialUser from "@/interface/PartialUser";
+import User from "@/interface/User";
 
 export default defineComponent({
   name: "PostControlsComponent",
@@ -105,8 +115,9 @@ export default defineComponent({
 
   setup(props) {
     const store = useStore<UserState>()
+    const author = computed<PartialUser>(() => store.state.users[props.post.author])
 
-    const author = computed<PartialUser | null>(() => store.state.users[props.post.author])
+    const self = computed<User | null>(() => store.state.self)
 
     const isLiked = computed<boolean>(() =>
         store.state.likes.find(value => value == props.post.id) != null)
@@ -135,6 +146,7 @@ export default defineComponent({
       postComment,
       isLiked,
       copyUrl,
+      self,
       author
     }
   }

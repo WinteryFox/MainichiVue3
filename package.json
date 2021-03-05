@@ -1,5 +1,5 @@
 {
-  "name": "mainichivue",
+  "name": "mainichi",
   "version": "0.1.0",
   "private": true,
   "scripts": {
@@ -9,18 +9,20 @@
   },
   "dependencies": {
     "@creativebulma/bulma-tooltip": "^1.2.0",
+    "@formatjs/intl-locale": "^2.4.14",
     "@types/eventsource": "^1.1.5",
     "axios": "^0.21.0",
     "bulma": "^0.9.1",
     "bulma-steps-component": "^0.5.3",
-    "core-js": "^3.6.5",
+    "core-js": "^3.9.0",
     "eventsource": "^1.0.7",
     "moment": "^2.29.1",
     "node-sass": "^5.0.0",
     "sass-loader": "^10.1.0",
-    "vue": "^3.0.4",
-    "vue-router": "^4.0.0-0",
-    "vuex": "^4.0.0-0"
+    "vue": "^3.0.5",
+    "vue-i18n": "^9.0.0-rc.7",
+    "vue-router": "^4.0.4",
+    "vuex": "^4.0.0"
   },
   "devDependencies": {
     "@typescript-eslint/eslint-plugin": "^2.33.0",
@@ -34,7 +36,7 @@
     "@vue/compiler-sfc": "^3.0.0",
     "@vue/eslint-config-typescript": "^5.0.2",
     "eslint": "^6.7.2",
-    "eslint-plugin-vue": "^7.0.0-0",
-    "typescript": "~3.9.3"
+    "eslint-plugin-vue": "^7.0.0",
+    "typescript": "~4.1.5"
   }
 }

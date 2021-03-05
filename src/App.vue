@@ -15,11 +15,18 @@
 import {defineComponent} from "vue";
 import HeaderComponent from "@/components/HeaderComponent.vue";
 import LoaderComponent from "@/components/LoaderComponent.vue";
+import {useStore} from "vuex";
+import {UserState} from "@/store";
+import {UserMutations} from "@/store/actions";
 
 export default defineComponent({
   components: {
     LoaderComponent,
     HeaderComponent
+  },
+
+  setup() {
+    useStore<UserState>().dispatch(UserMutations.FETCH_SELF)
   }
 })
 </script>

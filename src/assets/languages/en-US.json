@@ -1,0 +1,52 @@
+{
+  "general": {
+    "waiting": "Just a moment please"
+  },
+  "nav": {
+    "branding": "Mainichi",
+    "logout": "Logout"
+  },
+  "feed": {
+    "write": "What's happening?",
+    "create": "Post",
+    "copy-url": "Copy post URL",
+    "replying": "Replying to {'@'}{username}",
+    "reply": "Reply"
+  },
+  "register": {
+    "introduction": "It's time to one-up your language knowledge!",
+    "start": "Get started!",
+    "login": "Login",
+    "register": "Register",
+    "next": "Next",
+    "previous": "Previous",
+    "creating": "Creating account",
+    "step-1": {
+      "title": "Account information"
+    },
+    "step-2": {
+      "title": "Who are you?"
+    },
+    "step-3": {
+      "title": "Self-introduction",
+      "description": "Write a self-introduction so other people will know what you're all about!"
+    },
+    "step-4": {
+      "title": "Beep boop?"
+    },
+    "forms": {
+      "email": "Email",
+      "password": "Password",
+      "password-repeat": "Repeat password",
+      "username": "Display name",
+      "gender": "Gender",
+      "female": "Female",
+      "male": "Male",
+      "other": "Other | Prefer not to say",
+      "birthday": "Birthday",
+      "year": "Year",
+      "month": "Month",
+      "day": "Day"
+    }
+  }
+}

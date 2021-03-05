@@ -1,12 +1,12 @@
 <template>
-  <ModalComponent active>
+  <ModalComponent active @update:model-value="$router.push('/')">
     <div class="box">
       <div class="title mb-5 has-text-centered">
-        Login
+        {{ $t("register.login") }}
       </div>
 
       <div class="control field">
-        <label class="label" for="email">Email</label>
+        <label class="label" for="email">{{ $t("register.forms.email") }}</label>
         <input class="input"
                type="email"
                id="email"
@@ -15,7 +15,7 @@
       </div>
 
       <div class="control field">
-        <label class="label" for="password">Password</label>
+        <label class="label" for="password">{{ $t("register.forms.password") }}</label>
         <input class="input"
                type="password"
                id="password"
@@ -28,7 +28,7 @@
               :class="{ 'is-loading': isLoading }"
               :disabled="isLoading"
               @click="login">
-        Login
+        {{ $t("register.login") }}
       </button>
     </div>
   </ModalComponent>
@@ -45,7 +45,11 @@ import {UserMutations} from "@/store/actions";
 
 export default defineComponent({
   name: "Login",
-  components: {ModalComponent},
+
+  components: {
+    ModalComponent
+  },
+
   setup() {
     const router = useRouter()
     const store = useStore<UserState>()
@@ -75,8 +79,6 @@ export default defineComponent({
           alert("Username or password is incorrect")
         } else {
           isLoading.value = false
-          emailRef.value?.classList.add("is-danger")
-          passwordRef.value?.classList.add("is-danger")
           alert("Something went wrong, try again later!")
         }
       }
@@ -92,7 +94,3 @@ export default defineComponent({
   }
 })
 </script>
-
-<style scoped lang="sass">
-
-</style>

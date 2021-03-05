@@ -24,7 +24,7 @@ const state: UserState = {
 interface Actions {
     [UserMutations.FETCH_SELF](context: ActionContext<UserState, UserState>): Promise<void>;
 
-    [UserMutations.FETCH_USER_BATCH](context: ActionContext<UserState, UserState>, ids: Set<string>): Promise<void>;
+    [UserMutations.FETCH_USER](context: ActionContext<UserState, UserState>, id: string): Promise<void>;
 
     [UserMutations.FETCH_POSTS](context: ActionContext<UserState, UserState>): Promise<void>;
 }
@@ -36,19 +36,18 @@ const actions: ActionTree<UserState, UserState> & Actions = {
             const likes = await api.get(`/users/${self.data.id}/likes`)
             context.commit(UserMutations.FETCH_SELF, self.data)
             context.commit(UserMutations.FETCH_LIKES, likes.data)
-            await context.dispatch(UserMutations.FETCH_POSTS)
-        } catch (_) {
+        } catch (error) {
+            if (error.response.status !== 401)
+                throw error
         }
 
         return Promise.resolve()
     },
 
-    async [UserMutations.FETCH_USER_BATCH](context: ActionContext<UserState, UserState>, ids: Set<string>): Promise<void> {
-        const missing = Array.from(ids).filter(id => !(id in context.state.users))
-
-        if (missing.length > 0) {
-            const response = await api.get(`/users/${missing.toString()}`)
-            context.commit(UserMutations.FETCH_USER_BATCH, response.data)
+    async [UserMutations.FETCH_USER](context: ActionContext<UserState, UserState>, id: string): Promise<void> {
+        if (!context.state.users[id]) {
+            const response = await api.get(`/users/${id}`)
+            context.commit(UserMutations.FETCH_USER, response.data)
         }
 
         return Promise.resolve()
@@ -56,9 +55,10 @@ const actions: ActionTree<UserState, UserState> & Actions = {
 
     async [UserMutations.FETCH_POSTS](context: ActionContext<UserState, UserState>): Promise<void> {
         const posts: Array<Post> = (await api.get(`/posts`)).data
-
-        await context.dispatch(UserMutations.FETCH_USER_BATCH, posts.map(value => value.author))
         context.commit(UserMutations.FETCH_POSTS, posts)
+        for (const user of posts.map(post => post.author)) {
+            await context.dispatch(UserMutations.FETCH_USER, user);
+        }
 
         return Promise.resolve()
     },
@@ -75,7 +75,7 @@ interface Mutations<S = UserState> {
 
     [UserMutations.FETCH_LIKES](state: S, likes: Array<string>): void;
 
-    [UserMutations.FETCH_USER_BATCH](state: S, users: Array<PartialUser>): void;
+    [UserMutations.FETCH_USER](state: S, user: PartialUser): void;
 
     [UserMutations.LIKE_CREATED](state: S, like: Like): void;
 
@@ -95,9 +95,8 @@ const mutations: MutationTree<UserState> & Mutations = {
         state.likes = likes
     },
 
-    [UserMutations.FETCH_USER_BATCH](state: UserState, users: Array<PartialUser>) {
-        for (const user of users)
-            state.users[user.id] = user
+    [UserMutations.FETCH_USER](state: UserState, user: PartialUser) {
+        state.users[user.id] = user
     },
 
     [UserMutations.LIKE_CREATED](state: UserState, like: Like): void {

@@ -47,7 +47,7 @@ export default defineComponent({
     const router = useRouter()
     const route = useRoute()
     const store = useStore()
-    await store.dispatch(UserMutations.FETCH_USER_BATCH, [route.params.id])
+    await store.dispatch(UserMutations.FETCH_USER, route.params.id)
 
     const user: PartialUser = store.state.users[route.params.id.toString()]
     const languages = (await api.get(`/users/${user.id}/languages`)).data

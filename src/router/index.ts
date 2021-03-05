@@ -1,39 +1,31 @@
 import { createRouter, createWebHistory } from "vue-router"
-import Home from "@/views/Home.vue"
-import User from "@/views/User.vue"
-import Post from "@/views/Post.vue"
-import Profile from "@/views/Profile.vue"
-import Register from "@/views/Register.vue"
-import Login from "@/views/Login.vue"
 
 export default createRouter({
   history: createWebHistory(),
   routes: [
     {
       path: "/",
-      component: Home,
-      children: [
-        {
-          path: "/users/:id",
-          component: User
-        },
-        {
-          path: "/posts/:id",
-          component: Post
-        }
-      ]
+      component: () => import(/* webpackChunkName: "Home" */ "@/views/Feed.vue"),
+    },
+    {
+      path: "/users/:id",
+      component: () => import(/* webpackChunkName: "User" */ "@/views/User.vue")
+    },
+    {
+      path: "/posts/:id",
+      component: () => import(/* webpackChunkName: "Post" */ "@/views/Post.vue")
     },
     {
       path: "/profile",
-      component: Profile
+      component: () => import(/* webpackChunkName: "Profile" */ "@/views/Profile.vue")
     },
     {
       path: "/register",
-      component: Register
+      component: () => import(/* webpackChunkName: "Register" */ "@/views/Register.vue")
     },
     {
       path: "/login",
-      component: Login
+      component: () => import(/* webpackChunkName: "Login" */ "@/views/Login.vue")
     }
   ]
 })

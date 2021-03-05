@@ -42,10 +42,11 @@ export default defineComponent({
     const commenter = computed<PartialUser | null>(() => store.state.users[props.comment.commenter])
 
     if (commenter.value == null)
-      await store.dispatch(UserMutations.FETCH_USER_BATCH, props.comment.commenter)
+      await store.dispatch(UserMutations.FETCH_USER, props.comment.commenter)
 
     const time = Number(1609459200000n + (BigInt(props.comment.id) >> 22n))
     const date = ref(moment(time).fromNow(true))
+    setInterval(() => date.value = moment(time).fromNow(true), 60000)
 
     return {
       props,

@@ -2,6 +2,7 @@
   <div class="sel"
        ref="selRef">
     <div class="values"
+         :class="{ 'dropup': dropup }"
          ref="valuesRef"
          v-if="expanded">
       <a class="value"
@@ -46,6 +47,11 @@ export default defineComponent({
     label: {
       type: String,
       required: true
+    },
+    dropup: {
+      type: Boolean,
+      default: false,
+      required: false
     }
   },
 
@@ -137,6 +143,7 @@ export default defineComponent({
     display: flex
     align-items: center
     justify-content: space-between
+    width: 100%
     height: 40px
     padding: 0 8px
 
@@ -157,12 +164,16 @@ export default defineComponent({
     .icon
       user-select: none
 
+  .dropup
+    top: auto !important
+    bottom: 40px
+
   .values
     position: absolute
     display: flex
     text-decoration: none
     flex-direction: column
-    bottom: 40px
+    top: 40px
     width: 100%
     max-height: 200px
     overflow-y: auto

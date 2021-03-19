@@ -8,6 +8,14 @@ export default createRouter({
       component: () => import(/* webpackChunkName: "Home" */ "@/views/Feed.vue"),
     },
     {
+      path: "/register",
+      component: () => import(/* webpackChunkName: "Register" */ "@/views/Register.vue")
+    },
+    {
+      path: "/login",
+      component: () => import(/* webpackChunkName: "Login" */ "@/views/Login.vue")
+    },
+    {
       path: "/users/:id",
       component: () => import(/* webpackChunkName: "User" */ "@/views/User.vue")
     },
@@ -16,16 +24,22 @@ export default createRouter({
       component: () => import(/* webpackChunkName: "Post" */ "@/views/Post.vue")
     },
     {
-      path: "/profile",
-      component: () => import(/* webpackChunkName: "Profile" */ "@/views/Profile.vue")
+      path: "/settings",
+      component: () => import(/* webpackChunkName: "Settings" */ "@/views/settings/Index.vue"),
+      children: [
+        {
+          path: "/settings/account",
+          component: () => import(/* webpackChunkName: "AccountSettings" */ "@/views/settings/Account.vue")
+        },
+        {
+          path: "/settings/profile",
+          component: () => import(/* webpackChunkName: "AccountProfile" */ "@/views/settings/Profile.vue")
+        }
+      ]
     },
     {
-      path: "/register",
-      component: () => import(/* webpackChunkName: "Register" */ "@/views/Register.vue")
-    },
-    {
-      path: "/login",
-      component: () => import(/* webpackChunkName: "Login" */ "@/views/Login.vue")
+      path: "/:pathMatch(.*)*",
+      component: () => import(/* webpackChunkName: "NotFound" */ "@/views/NotFound.vue")
     }
   ]
 })

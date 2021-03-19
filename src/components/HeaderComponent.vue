@@ -31,7 +31,7 @@
         <div class="navbar-item has-dropdown"
              v-if="self !== null">
           <router-link
-              to="/profile"
+              to="/settings"
               class="navbar-item is-flex">
             <AvatarComponent :avatar="self.avatar" size="24" class="mr-2"/>
             {{ self.username }}

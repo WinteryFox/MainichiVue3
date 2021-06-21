@@ -77,13 +77,13 @@ interface Mutations<S = UserState> {
 
     [UserMutations.FETCH_USER](state: S, user: PartialUser): void;
 
-    [UserMutations.LIKE_CREATED](state: S, like: Like): void;
+    [UserMutations.LIKE_CREATE](state: S, like: Like): void;
 
-    [UserMutations.LIKE_DELETED](state: S, like: Like): void;
+    [UserMutations.LIKE_DELETE](state: S, like: Like): void;
 
     [UserMutations.FETCH_POSTS](state: S, posts: Array<Post>): void;
 
-    [UserMutations.COMMENT_CREATED](state: S, comment: Comment): void;
+    [UserMutations.COMMENT_CREATE](state: S, comment: Comment): void;
 }
 
 const mutations: MutationTree<UserState> & Mutations = {
@@ -99,7 +99,7 @@ const mutations: MutationTree<UserState> & Mutations = {
         state.users[user.id] = user
     },
 
-    [UserMutations.LIKE_CREATED](state: UserState, like: Like): void {
+    [UserMutations.LIKE_CREATE](state: UserState, like: Like): void {
         const post = state.posts[like.post]
         if (post) {
             state.posts[like.post] = {
@@ -115,7 +115,7 @@ const mutations: MutationTree<UserState> & Mutations = {
             state.likes.push(like.post)
     },
 
-    [UserMutations.LIKE_DELETED](state: UserState, like: Like): void {
+    [UserMutations.LIKE_DELETE](state: UserState, like: Like): void {
         const post = state.posts[like.post]
         if (post) {
             state.posts[like.post] = {
@@ -136,11 +136,11 @@ const mutations: MutationTree<UserState> & Mutations = {
             state.posts[post.id] = post
     },
 
-    [UserMutations.POST_CREATED](state: UserState, post: Post): void {
+    [UserMutations.POST_CREATE](state: UserState, post: Post): void {
         state.posts[post.id] = post
     },
 
-    [UserMutations.COMMENT_CREATED](state: UserState, comment: Comment): void {
+    [UserMutations.COMMENT_CREATE](state: UserState, comment: Comment): void {
         const post = state.posts[comment.post]
 
         if (post)

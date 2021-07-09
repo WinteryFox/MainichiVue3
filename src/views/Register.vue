@@ -168,6 +168,7 @@ import moment from "moment";
 import {useRouter} from "vue-router";
 import {useStore} from "vuex";
 import {UserState} from "@/store";
+import {UserMutations} from "@/store/actions";
 
 export default defineComponent({
   name: "Register",
@@ -222,7 +223,7 @@ export default defineComponent({
     async function register(token: string) {
       isLoading.value = true
       try {
-        await api.post(
+        const response = await api.post(
             "/register",
             {
               captcha: token,
@@ -231,9 +232,18 @@ export default defineComponent({
               password: form.password,
               summary: form.summary,
               username: form.username,
-              birthday: new Date(birthday.year, moment().month(birthday.month).month(), birthday.day).toISOString()
+              birthday: new Date(
+                  Date.UTC(
+                      birthday.year,
+                      moment().month(birthday.month).month(),
+                      birthday.day
+                  )
+              ).toISOString()
             }
         )
+
+        window.localStorage.setItem("token", response.data.token)
+        await store.dispatch(UserMutations.FETCH_SELF)
       } catch (e) {
         const error: Error = e.response.data
         isLoading.value = false

@@ -4,10 +4,10 @@ import {UserMutations} from "@/store/actions";
 import store from "@/store"
 
 const events: Record<string, UserMutations> = {
-    "LIKE_CREATED": UserMutations.LIKE_CREATED,
-    "LIKE_DELETED": UserMutations.LIKE_DELETED,
-    "POST_CREATED": UserMutations.POST_CREATED,
-    "COMMENT_CREATED": UserMutations.COMMENT_CREATED,
+    "LIKE_CREATE": UserMutations.LIKE_CREATE,
+    "LIKE_DELETE": UserMutations.LIKE_DELETE,
+    "POST_CREATE": UserMutations.POST_CREATE,
+    "COMMENT_CREATE": UserMutations.COMMENT_CREATE,
 }
 
 const publisher = new EventSource(
